@@ -1,0 +1,41 @@
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+-- Create RemoteEvent if it doesn't exist
+local headEvent = Instance.new("RemoteEvent")
+headEvent.Name = "UpdateHeadCFrame"
+headEvent.Parent = ReplicatedStorage
+
+-- Handle head updates and broadcast to all players
+headEvent.OnServerEvent:Connect(function(player, cframe)
+	for _, otherPlayer in ipairs(Players:GetPlayers()) do
+		if otherPlayer ~= player then
+			headEvent:FireClient(otherPlayer, player, cframe)
+		end
+	end
+end)
+	------------honestly dont need this but easier for me to copy paste and check ids as needed :]
+--Run "rbxassetid://108999179774030"
+--Walk "rbxassetid://88782065952494"
+--Crouch "rbxassetid://72380389179373"
+--CrouchWalk "rbxassetid://124001466484838"
+--CrouchPose "rbxassetid://111160791127334"
+--Jump "rbxassetid://"
+--Fall "rbxassetid://"
+--DodgeLeft "rbxassetid://"
+--DodgeRight "rbxassetid://"
+-- SlideForwards "rbxassetid://"
+--RollForwards "rbxassetid://"
+--OpenMenu "rbxassetid://"
+
+--IDLES
+--OpenMenuIdle
+--Idle1(if circuit modded) will scan area then use menu arm
+--Idle2 taps foot, looks around
+--idle3 goes into sleep mode before waking up surprised and checking for any witnesses
+--CrouchIdle
+
+--STRETCH GOALS
+--If character idle near streetlamp, will grabon and spin a few times
+--if character idle near companion player, will play games like rock paper scissors (icons will display on faces), do 'secret' handshakes, etc
+--if character idle near enemy player, will play pranks like tapping shoulder on opposite side, side sweeping them, etc
