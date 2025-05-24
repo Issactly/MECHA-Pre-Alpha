@@ -6,7 +6,7 @@ Two months(ish) to make my final project and prove I can learn on my own.
 # Testers
 PC: 
 
-Console: [Ibra-Hud](https://github.com/Ibra-Hud), Kris (pending link)
+Console: [Ibra-Hud](https://github.com/Ibra-Hud), [KrisNoel23](https://github.com/KrisNoel23)
 
 Mobile: ray666666
 
