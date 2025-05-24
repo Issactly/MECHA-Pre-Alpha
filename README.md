@@ -11,7 +11,7 @@ Console: [Ibra-Hud](https://github.com/Ibra-Hud), [KrisNoel23](https://github.co
 Mobile: ray666666
 
 ## Update 05/24/2025:
-**PC: **
+**PC:**
 Players can walk, sprint w/Lshift, crouch w/C and see what direction other players are looking to. Walk speeds change accordingly and jump is disabled while crouching. Accidentally made the crouch good(???) You can _tap_ C to crouch, then any other movement key input will make the character stand or you can *hold* to stay crouched no matter the other movement key inputs.
 
 Sameday sub-updates:
