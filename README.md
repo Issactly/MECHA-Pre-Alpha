@@ -4,7 +4,7 @@ Two months(ish) to make my final project and prove I can learn on my own.
 # Game Concept
 
 # Testers
-PC: 
+PC: [aaami988](https://github.com/aaami988)
 
 Console: [Ibra-Hud](https://github.com/Ibra-Hud), [KrisNoel23](https://github.com/KrisNoel23)
 
