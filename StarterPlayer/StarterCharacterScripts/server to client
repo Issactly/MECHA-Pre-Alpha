@@ -1,0 +1,15 @@
+local Players = game:GetService("Players")
+local headEvent = game:GetService("ReplicatedStorage"):WaitForChild("UpdateHeadCFrame")
+
+headEvent.OnClientEvent:Connect(function(senderPlayer, cframe)
+	local character = senderPlayer.Character
+	if character then
+		local torso = character:FindFirstChild("Torso") or character:FindFirstChild("UpperTorso")
+		if torso then
+			local neck = torso:FindFirstChild("Neck")
+			if neck then
+				neck.C0 = cframe
+			end
+		end
+	end
+end)
