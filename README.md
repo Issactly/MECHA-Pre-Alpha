@@ -1,4 +1,4 @@
-# MECHA Pre-Alpha
+# M.E.C.H.A. Pre-Alpha
 Two months(ish) to make my final project and prove I can learn on my own.
 
 # Game Concept
