@@ -14,6 +14,7 @@ Sameday sub-updates:
 - The mechanics work for movement: walk/run forwards/backwards & walk/run left/right. Currently animations overtake one another as theres not been stricter priorities set (again cosmetics will be done later)
 - HEAVILY simplified the movement. before it was something like `if IsRunning then RunTrack:Play()` then underneath in the actual button tracking mess `input.Keycode == Enum.Keycode.W then isRunning = true` blah blah blah hopefully you get it. _It was redundanttttt_ but now the button tracking immediately sets the animations and checks itself to now when I add _crouching_ will (hopefully) not have the same issue where you would tap to crouch but have to hold to get up (i do believe that was a `task.wait()` issue though)
 - just threw in the crouching anims, it works perfectly (EXCEPT IT DOESNT) theres a visual/cosmetic bug: the head moves side to side for some reason? (i can totes fix it in 2 seconds but not now lol)
+- (17:16) Proud to announce that movement is all set to build off of :] you can walk/sprint/crouch and theres only 1 visual bug with the head but ill fix that now before sliding since sliding also uses a cam following head mechanic
 - Up next: Creating a sliding mechanic
 
 $${\color{lightblue}Dev \space Diary:}$$
