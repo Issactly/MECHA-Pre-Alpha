@@ -1,1 +1,216 @@
+--get current player
+local players = game:GetService("Players") -- player things
+local UserInputService = game:GetService("UserInputService") --keyboard/mouse inputs
+local RunService = game:GetService("RunService") --anim loops
+local Players = game:GetService("Players")
 
+--wait for players av
+local lp = players.LocalPlayer
+local char = lp.Character or lp.CharacterAdded:Wait()
+
+--acess bod
+local hum = char:WaitForChild("Humanoid") --nucelus of movement
+local root = char:WaitForChild("HumanoidRootPart") --character center
+
+--anims
+local animator = hum:WaitForChild("Animator")
+local ForwardsRunAnimation = Instance.new("Animation")
+local ForwardsWalkAnimation = Instance.new("Animation")
+local BackwardsWalkAnimation = Instance.new("Animation")
+local LeftWalkAnimation = Instance.new("Animation")
+local LeftRunAnimation = Instance.new("Animation")
+local RightRunAnimation = Instance.new("Animation")
+local RightWalkAnimation = Instance.new("Animation")
+local crouchPoseAnimation = Instance.new("Animation")
+local crouchDownAnimation = Instance.new("Animation")
+
+--assign names to animsids
+ForwardsRunAnimation.AnimationId = "rbxassetid://108999179774030"
+ForwardsWalkAnimation.AnimationId = "rbxassetid://88782065952494"
+BackwardsWalkAnimation.AnimationId = "rbxassetid://90167336530499"
+LeftWalkAnimation.AnimationId = "rbxassetid://139349784706953"
+LeftRunAnimation.AnimationId = "rbxassetid://98205979853674"
+RightRunAnimation.AnimationId = "rbxassetid://106487017963781"
+RightWalkAnimation.AnimationId = "rbxassetid://78920439156519"
+crouchPoseAnimation.AnimationId = "rbxassetid://111160791127334"
+crouchDownAnimation.AnimationId = "rbxassetid://72380389179373"
+
+--set the tracks
+local ForwardsRunTrack = animator:LoadAnimation(ForwardsRunAnimation)
+local ForwardsWalkTrack = animator:LoadAnimation(ForwardsWalkAnimation)
+local BackwardsWalkTrack = animator:LoadAnimation(BackwardsWalkAnimation)
+local LeftWalkTrack = animator:LoadAnimation(LeftWalkAnimation)
+local LeftRunTrack = animator:LoadAnimation(LeftRunAnimation)
+local RightRunTrack = animator:LoadAnimation(RightRunAnimation)
+local RightWalkTrack = animator:LoadAnimation(RightWalkAnimation)
+local crouchDownTrack = animator:LoadAnimation(crouchDownAnimation)
+local crouchPoseTrack = animator:LoadAnimation(crouchPoseAnimation)
+
+--loop or naw
+crouchPoseTrack.Looped=true
+ForwardsWalkTrack.Looped=true
+BackwardsWalkTrack.Looped=true
+LeftWalkTrack.Looped=true
+LeftRunTrack.Looped=true
+RightRunTrack.Looped = true
+RightWalkTrack.Looped=true
+crouchDownTrack.Looped=false
+ForwardsRunTrack.Looped=true
+
+
+--sprinting
+local isShiftHeld = false
+local isRunning = false --its not used butttt leave it here just in case
+
+--directionals
+local isMovingForwards = false
+local isMovingBackwards = false
+local isMovingLeft = false
+local isMovingRight = false
+--crouches
+local isLCtrlHeld = false
+local isCrouching = false
+
+--func for checking changes
+
+
+-- began
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+	if input.KeyCode == Enum.KeyCode.W then
+		isMovingForwards = true
+		if isShiftHeld then
+			hum.WalkSpeed = 30
+			ForwardsWalkTrack:Stop()
+			ForwardsRunTrack:Play()
+		else
+			hum.WalkSpeed = 16
+			ForwardsRunTrack:Stop()
+			ForwardsWalkTrack:Play()
+		end
+	elseif input.KeyCode == Enum.KeyCode.A then
+		isMovingLeft = true
+		if isShiftHeld then
+			hum.WalkSpeed = 30
+			LeftWalkTrack:Stop()
+			LeftRunTrack:Play()
+		else
+			hum.WalkSpeed = 16
+			LeftRunTrack:Stop()
+			LeftWalkTrack:Play()
+		end
+		ForwardsRunTrack:Stop()
+		ForwardsWalkTrack:Stop()
+		RightWalkTrack:Stop()
+		RightRunTrack:Stop()
+	elseif input.KeyCode == Enum.KeyCode.S then
+		isMovingBackwards = true
+		ForwardsRunTrack:Stop()
+		ForwardsWalkTrack:Stop()
+		RightWalkTrack:Stop()
+		RightRunTrack:Stop()
+		LeftWalkTrack:Stop()
+		LeftRunTrack:Stop()
+		if isShiftHeld then
+			hum.WalkSpeed = 20
+		else
+			hum.WalkSpeed = 14
+		end
+		BackwardsWalkTrack:Play()
+	elseif input.KeyCode == Enum.KeyCode.D then
+		isMovingRight = true
+		if isShiftHeld then
+			hum.WalkSpeed = 30
+			RightWalkTrack:Stop()
+			RightRunTrack:Play()
+		else
+			hum.WalkSpeed = 16
+			RightRunTrack:Stop()
+			RightWalkTrack:Play()
+		end
+		ForwardsRunTrack:Stop()
+		ForwardsWalkTrack:Stop()
+		LeftWalkTrack:Stop()
+		LeftRunTrack:Stop()
+	elseif input.KeyCode == Enum.KeyCode.LeftShift then
+		isShiftHeld = true
+		if isMovingForwards then
+			hum.WalkSpeed = 30
+			ForwardsWalkTrack:Stop()
+			ForwardsRunTrack:Play()
+		elseif isMovingLeft then
+			hum.WalkSpeed = 30
+			LeftWalkTrack:Stop()
+			LeftRunTrack:Play()
+		elseif isMovingRight then
+			hum.WalkSpeed = 30
+			RightWalkTrack:Stop()
+			RightRunTrack:Play()
+		elseif isMovingBackwards then
+			hum.WalkSpeed = 20
+		end
+	elseif input.KeyCode == Enum.KeyCode.LeftControl then
+		isLCtrlHeld = true
+		isCrouching = true
+		hum.WalkSpeed = 7
+		crouchPoseTrack:Play()
+		hum:SetStateEnabled(Enum.HumanoidStateType.Jumping, false)
+	end
+end)
+
+--end
+UserInputService.InputEnded:Connect(function(input, gameProcessed)
+	if input.KeyCode == Enum.KeyCode.W then
+		isMovingForwards = false
+		ForwardsWalkTrack:Stop()
+		ForwardsRunTrack:Stop()
+	elseif input.KeyCode == Enum.KeyCode.A then
+		isMovingLeft = false
+		LeftWalkTrack:Stop()
+		LeftRunTrack:Stop()
+		if isMovingForwards then
+			if isShiftHeld then
+				ForwardsRunTrack:Play()
+			else
+				ForwardsWalkTrack:Play()
+			end
+		end
+	elseif input.KeyCode == Enum.KeyCode.S then
+		isMovingBackwards = false
+		BackwardsWalkTrack:Stop()
+		if not (isMovingForwards or isMovingLeft or isMovingRight) then
+			hum.walkspeed = 16
+		end
+	elseif input.KeyCode == Enum.KeyCode.D then
+		isMovingRight = false
+		RightWalkTrack:Stop()
+		RightRunTrack:Stop()
+		if isMovingForwards then
+			if isShiftHeld then
+				ForwardsRunTrack:Play()
+			else
+				ForwardsWalkTrack:Play()
+			end
+		end
+	elseif input.KeyCode == Enum.KeyCode.LeftShift then
+		isShiftHeld = false
+		hum.WalkSpeed = 16
+		if isMovingForwards then
+			ForwardsRunTrack:Stop()
+			ForwardsWalkTrack:Play()
+		elseif isMovingLeft then
+			LeftRunTrack:Stop()
+			LeftWalkTrack:Play()
+		elseif isMovingRight then
+			RightRunTrack:Stop()
+			RightWalkTrack:Play()
+		elseif isMovingBackwards then
+			hum.WalkSpeed = 7
+		end
+	elseif input.KeyCode == Enum.KeyCode.LeftControl then
+		isLCtrlHeld = false
+		isCrouching = false
+		crouchPoseTrack:Stop()
+		hum.WalkSpeed = 16
+		hum:SetStateEnabled(Enum.HumanoidStateType.Jumping, true)
+	end
+end)
