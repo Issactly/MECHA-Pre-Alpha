@@ -1,6 +1,6 @@
 --get current player
 local players = game:GetService("Players") -- player things
-local UserInputService = game:GetService("UserInputService") --keyboard/mouse inputs
+local UIS = game:GetService("UserInputService") --keyboard/mouse inputs
 local RunService = game:GetService("RunService") --anim loops
 local Players = game:GetService("Players")
 
@@ -75,7 +75,7 @@ local isCrouching = false
 
 
 -- began
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
+UIS.InputBegan:Connect(function(input, gameProcessed)
 	if input.KeyCode == Enum.KeyCode.W then
 		isMovingForwards = true
 		if isCrouching then
@@ -170,6 +170,7 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
 	elseif input.KeyCode == Enum.KeyCode.LeftControl then
 		isLCtrlHeld = true
 		isCrouching = true
+		hum.HipHeight -= 1.2
 		hum.WalkSpeed = 7
 		crouchPoseTrack:Play()
 		hum:SetStateEnabled(Enum.HumanoidStateType.Jumping, false)
@@ -177,7 +178,7 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
 end)
 
 --end
-UserInputService.InputEnded:Connect(function(input, gameProcessed)
+UIS.InputEnded:Connect(function(input, gameProcessed)
 	if input.KeyCode == Enum.KeyCode.W then
 		isMovingForwards = false
 		ForwardsWalkTrack:Stop()
@@ -231,6 +232,7 @@ UserInputService.InputEnded:Connect(function(input, gameProcessed)
 		isLCtrlHeld = false
 		isCrouching = false
 		crouchPoseTrack:Stop()
+		hum.HipHeight += 1.2
 		hum.WalkSpeed = 16
 		hum:SetStateEnabled(Enum.HumanoidStateType.Jumping, true)
 		if isShiftHeld then
