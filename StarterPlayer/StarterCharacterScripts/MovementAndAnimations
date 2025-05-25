@@ -78,7 +78,10 @@ local isCrouching = false
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
 	if input.KeyCode == Enum.KeyCode.W then
 		isMovingForwards = true
-		if isShiftHeld then
+		if isCrouching then
+			hum.WalkSpeed = 7
+		else
+			if isShiftHeld then
 			hum.WalkSpeed = 30
 			ForwardsWalkTrack:Stop()
 			ForwardsRunTrack:Play()
@@ -87,9 +90,13 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
 			ForwardsRunTrack:Stop()
 			ForwardsWalkTrack:Play()
 		end
+		end
 	elseif input.KeyCode == Enum.KeyCode.A then
 		isMovingLeft = true
-		if isShiftHeld then
+		if isCrouching then
+			hum.WalkSpeed = 7
+		else
+			if isShiftHeld then
 			hum.WalkSpeed = 30
 			LeftWalkTrack:Stop()
 			LeftRunTrack:Play()
@@ -98,26 +105,35 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
 			LeftRunTrack:Stop()
 			LeftWalkTrack:Play()
 		end
+		end
 		ForwardsRunTrack:Stop()
 		ForwardsWalkTrack:Stop()
 		RightWalkTrack:Stop()
 		RightRunTrack:Stop()
 	elseif input.KeyCode == Enum.KeyCode.S then
 		isMovingBackwards = true
+		if isCrouching then
+			hum.WalkSpeed = 7
+		else 
+			if isShiftHeld then
+				hum.WalkSpeed = 20
+			else
+				hum.WalkSpeed = 14
+			end
+			BackwardsWalkTrack:Play()
+		end
 		ForwardsRunTrack:Stop()
 		ForwardsWalkTrack:Stop()
 		RightWalkTrack:Stop()
 		RightRunTrack:Stop()
 		LeftWalkTrack:Stop()
 		LeftRunTrack:Stop()
-		if isShiftHeld then
-			hum.WalkSpeed = 20
-		else
-			hum.WalkSpeed = 14
-		end
-		BackwardsWalkTrack:Play()
+	
 	elseif input.KeyCode == Enum.KeyCode.D then
 		isMovingRight = true
+		if isCrouching then
+			hum.WalkSpeed = 7
+		else
 		if isShiftHeld then
 			hum.WalkSpeed = 30
 			RightWalkTrack:Stop()
@@ -127,13 +143,16 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
 			RightRunTrack:Stop()
 			RightWalkTrack:Play()
 		end
+		end
 		ForwardsRunTrack:Stop()
 		ForwardsWalkTrack:Stop()
 		LeftWalkTrack:Stop()
 		LeftRunTrack:Stop()
 	elseif input.KeyCode == Enum.KeyCode.LeftShift then
 		isShiftHeld = true
-		if isMovingForwards then
+		if isCrouching then 
+			hum.WalkSpeed = 7
+		elseif isMovingForwards then
 			hum.WalkSpeed = 30
 			ForwardsWalkTrack:Stop()
 			ForwardsRunTrack:Play()
@@ -194,7 +213,9 @@ UserInputService.InputEnded:Connect(function(input, gameProcessed)
 	elseif input.KeyCode == Enum.KeyCode.LeftShift then
 		isShiftHeld = false
 		hum.WalkSpeed = 16
-		if isMovingForwards then
+		if isCrouching then
+			hum.WalkSpeed = 7
+		elseif isMovingForwards then
 			ForwardsRunTrack:Stop()
 			ForwardsWalkTrack:Play()
 		elseif isMovingLeft then
@@ -212,5 +233,9 @@ UserInputService.InputEnded:Connect(function(input, gameProcessed)
 		crouchPoseTrack:Stop()
 		hum.WalkSpeed = 16
 		hum:SetStateEnabled(Enum.HumanoidStateType.Jumping, true)
+		if isShiftHeld then
+			hum.WalkSpeed = 30
+			ForwardsRunTrack:Play()
+		end
 	end
 end)
