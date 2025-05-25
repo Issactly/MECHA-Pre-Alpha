@@ -1,0 +1,63 @@
+--this handles the shift lock AND head to cam movements!!
+
+
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+local plr = game:GetService("Players").LocalPlayer
+local char = script.Parent
+local hum = char:WaitForChild("Humanoid")
+local root = hum.RootPart
+
+function shiftLock(active) --toggle shftlck func
+	if active then --whether to en/disable
+		hum.CameraOffset = Vector3.new(4,0,0)
+		hum.AutoRotate = false --disable auto rot to set by dev ake moi ;]
+		
+		RunService:BindToRenderStep("ShiftLock", Enum.RenderPriority.Character.Value, function()
+			UserInputService.MouseBehavior = Enum.MouseBehavior.LockCenter
+			
+			local _, y = workspace.CurrentCamera.CFrame.Rotation:ToEulerAnglesYXZ() --get cam angles
+			root.CFrame = CFrame.new(root.Position) * CFrame.Angles(0,y,0) --set root part to cams angs^
+		end)
+	else
+		hum.CameraOffset = Vector3.new(0,0,0)
+		RunService:UnbindFromRenderStep("ShiftLock")
+		UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+		hum.AutoRotate = true
+	end
+end
+
+shiftLock(true)
+
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+
+--acess to bod parts
+local hum = char:WaitForChild("Humanoid") --nucelus of movement
+local root = char:WaitForChild("HumanoidRootPart") --character center
+local cam = workspace.CurrentCamera -- player cam
+local torso = char:FindFirstChild("Torso") --bod anchor
+local neck = torso:WaitForChild("Neck") --neck joint
+local y = neck.C0.Y --og neck pos
+
+--head to cam movement
+local headEvent = game:GetService("ReplicatedStorage"):WaitForChild("UpdateHeadCFrame")
+local frameCounter = 0
+local updateEveryXFrames = 7 --^morechoppy vlesschoppy
+
+RunService.RenderStepped:Connect(function()
+	frameCounter = frameCounter + 1
+	if frameCounter % updateEveryXFrames == 0 then
+		local camdirec = root.CFrame:ToObjectSpace(cam.CFrame).LookVector
+		if neck then
+			neck.C0 = CFrame.new(0,y,0) * CFrame.Angles(0,math.rad(180),0) * 
+				CFrame.Angles(0,-camdirec.X,0) * CFrame.Angles(-camdirec.Y,0,0)
+			neck.C0 = neck.C0 * CFrame.Angles(math.rad(-90),0,0)
+			headEvent:FireServer(neck.C0)
+		end
+	end
+end)
