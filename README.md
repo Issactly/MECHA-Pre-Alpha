@@ -5,6 +5,17 @@ Two months(ish) to make my final project and prove I can learn on my own.
 .
 
 
+## Update 05/25/2025 (01:57):
+**PC:**
+Players have no walking animations, cant sprint or crouch. client > server > client file is untouched but everything else is scrapped. I found an easier way to achieve shift lock rather than setting `AutoRotation = false` everytime `C` was held. It was causing issues because the camera could still orbit. Thanks a lot Roblox for depreciating dev controls over shift lock >:[ Anyways, it's done and now I can move over the old animation lines to this new one with SOOO much less `if` `elseif` `else` statements that were just hurting my head lmao.
+
+Sameday sub-updates:
+- Up next: Setting Crouch to `ctrl` and creating a sliding mechanic
+- Empty
+- Empty
+
+
+
 
 ## Update 05/24/2025:
 **PC:**
