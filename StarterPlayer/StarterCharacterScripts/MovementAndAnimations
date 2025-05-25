@@ -60,7 +60,7 @@ ForwardsRunTrack.Looped=true
 
 --sprinting
 local isShiftHeld = false
-local isRunning = false
+local isRunning = false --its not used butttt leave it here just in case
 
 --directionals
 local isMovingForwards = false
@@ -72,8 +72,7 @@ local isLCtrlHeld = false
 local isCrouching = false
 
 --func for checking changes
-local function updateRunningState()
-end
+
 
 -- began
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
@@ -152,8 +151,9 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
 	elseif input.KeyCode == Enum.KeyCode.LeftControl then
 		isLCtrlHeld = true
 		isCrouching = true
+		hum.WalkSpeed = 7
+		crouchPoseTrack:Play()
 		hum:SetStateEnabled(Enum.HumanoidStateType.Jumping, false)
-		updateRunningState()
 	end
 end)
 
@@ -209,6 +209,8 @@ UserInputService.InputEnded:Connect(function(input, gameProcessed)
 	elseif input.KeyCode == Enum.KeyCode.LeftControl then
 		isLCtrlHeld = false
 		isCrouching = false
+		crouchPoseTrack:Stop()
+		hum.WalkSpeed = 16
 		hum:SetStateEnabled(Enum.HumanoidStateType.Jumping, true)
 	end
 end)
