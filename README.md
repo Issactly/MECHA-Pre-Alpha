@@ -10,11 +10,13 @@ You play as an android in the H sector, working to infiltrate facilities and ste
 Players have no walking animations, cant sprint or crouch. client > server > client file is untouched but everything else is scrapped. I found an easier way to achieve shift lock rather than setting `AutoRotation = false` everytime `C` was held. It was causing issues because the camera could still orbit. Thanks a lot Roblox for depreciating dev controls over shift lock >:[ Anyways, it's done and now I can move over the old animation lines to this new one with SOOO much less `if` `elseif` `else` statements that were just hurting my head lmao.
 
 Sameday sub-updates:
-- Up next: Setting Crouch to `ctrl` and creating a sliding mechanic
-- Empty
-- Empty
+- Players now have corresponding animations for forwards, backwards, left and right (although left and right is Larm up for Lwalk and Lleg out for Lrun and the corresponding for right BUT HEY im trying to get scripts done LOL we make it look pretty later :]) 
+- The mechanics work for movement: walk/run forwards/backwards & walk/run left/right. Currently animations overtake one another as theres not been stricter priorities set (again cosmetics will be done later)
+- HEAVILY simplified the movement. before it was something like `if IsRunning then RunTrack:Play()` then underneath in the actual button tracking mess `input.Keycode == Enum.Keycode.W then isRunning = true` blah blah blah hopefully you get it. _It was redundanttttt_ but now the button tracking immediately sets the animations and checks itself to now when I add _crouching_ will (hopefully) not have the same issue where you would tap to crouch but have to hold to get up (i do believe that was a `task.wait()` issue though)
+- Up next: Creating a sliding mechanic
 
-
+$${\color{lightblue}Dev \space Diary:}$$
+I realize ive said `hopefully` like 10 times already, incluing the comments here to myself you can't see. Im gonna keep saying it lol its working!! i kinda spent 2 days learning the syntax i guess? and now ive spent one day implementing it and simplifying what i learned so im pretty sure thats a win. It is 04:11 buttttt something about worms right? I think as a treat ill spend today resting up and then animating because while tedious since im NOT PAYING 30$ (for a really nice in studio editing plugin >:'[ ) its still kinda fun and with my choppy style I lowkey dont need to put CRAZY effort and again its just going to be very simple until all the scripting is done :D An unfortunate thing is, this readme is not at all professional and if is this is to show how i am on projects _yeesh_ in the end Im unsure if this field is for me. I like to write how I think, be grammatically inccorect at 4am and write silly comments in my code. I don't think I'm very good at being serious nor do I really want to be! I know I'll find something right for me even if its not here :> for now all i need to do is make something that works, hits all the marks, and i enjoy. Wish me luck!
 
 
 ## Update 05/24/2025:
