@@ -2,7 +2,7 @@
 Two months(ish) to make my final project and prove I can learn on my own.
 
 # Game Concept
-.
+You play as an android in the H sector, working to infiltrate facilities and steal critical data. Play in teams of 10 and beat the clock solving puzzles, fighting enemies and finding secrets along the way. Or go rouge and battle against homebase while they play clean up. **Welcome to the Dome.**
 
 
 ## Update 05/25/2025 (01:57):
