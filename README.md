@@ -13,6 +13,7 @@ Sameday sub-updates:
 - Players now have corresponding animations for crouching, forwards, backwards, left and right (although left and right is Larm up for Lwalk and Lleg out for Lrun and the corresponding for right BUT HEY im trying to get scripts done LOL we make it look pretty later :]) 
 - The mechanics work for movement: walk/run forwards/backwards & walk/run left/right. Currently animations overtake one another as theres not been stricter priorities set (again cosmetics will be done later)
 - HEAVILY simplified the movement. before it was something like `if IsRunning then RunTrack:Play()` then underneath in the actual button tracking mess `input.Keycode == Enum.Keycode.W then isRunning = true` blah blah blah hopefully you get it. _It was redundanttttt_ but now the button tracking immediately sets the animations and checks itself to now when I add _crouching_ will (hopefully) not have the same issue where you would tap to crouch but have to hold to get up (i do believe that was a `task.wait()` issue though)
+- just threw in the crouching anims, it works perfectly (EXCEPT IT DOESNT) theres a visual/cosmetic bug: the head moves side to side for some reason? (i can totes fix it in 2 seconds but not now lol)
 - Up next: Creating a sliding mechanic
 
 $${\color{lightblue}Dev \space Diary:}$$
@@ -26,7 +27,6 @@ Players can walk, sprint w/Lshift, crouch w/C and see what direction other playe
 Sameday sub-updates:
 - yeah so about that tap to crouch,,, its pretty much a bug. Theres been an update to make it less in the way but after crouching and walking youll keep the crouched down pose. Thankfully that out of the way update fixed the speed so youll move as intended! Its a visual bug of sorts haha
 - Camera now has a shorter Max zoom out. Invisicam is enabled to prevent any weird angles (hopefully) Camera movement with crouch is being considered but I may have to rebuild the Head and Neck stuff for it to not break :']
-- just threw in the crouching anims, it works perfectly (EXCEPT IT DOESNT) theres a visual/cosmetic bug: the head moves side to side for some reason? (i can totes fix it in 2 seconds but not now lol)
 - Up next: Sliding mechanic
 
 Due to Roblox's console guidelines I have to end console support. With the content my game will contain, it breaks the content agreement :[
