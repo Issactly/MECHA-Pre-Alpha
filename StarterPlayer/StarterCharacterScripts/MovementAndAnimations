@@ -23,6 +23,7 @@ local RightRunAnimation = Instance.new("Animation")
 local RightWalkAnimation = Instance.new("Animation")
 local crouchPoseAnimation = Instance.new("Animation")
 local crouchDownAnimation = Instance.new("Animation")
+local slidePoseAnimation = Instance.new("Animation")
 
 --assign names to animsids
 ForwardsRunAnimation.AnimationId = "rbxassetid://108999179774030"
@@ -34,6 +35,7 @@ RightRunAnimation.AnimationId = "rbxassetid://106487017963781"
 RightWalkAnimation.AnimationId = "rbxassetid://78920439156519"
 crouchPoseAnimation.AnimationId = "rbxassetid://111160791127334"
 crouchDownAnimation.AnimationId = "rbxassetid://72380389179373"
+slidePoseAnimation.AnimationId = "rbxassetid://99512521009826"
 
 --set the tracks
 local ForwardsRunTrack = animator:LoadAnimation(ForwardsRunAnimation)
@@ -45,6 +47,7 @@ local RightRunTrack = animator:LoadAnimation(RightRunAnimation)
 local RightWalkTrack = animator:LoadAnimation(RightWalkAnimation)
 local crouchDownTrack = animator:LoadAnimation(crouchDownAnimation)
 local crouchPoseTrack = animator:LoadAnimation(crouchPoseAnimation)
+local slidePoseTrack = animator:LoadAnimation(slidePoseAnimation)
 
 --loop or naw
 crouchPoseTrack.Looped=true
@@ -56,6 +59,7 @@ RightRunTrack.Looped = true
 RightWalkTrack.Looped=true
 crouchDownTrack.Looped=false
 ForwardsRunTrack.Looped=true
+slidePoseTrack.Looped=true
 
 
 --sprinting
@@ -71,7 +75,9 @@ local isMovingRight = false
 local isLCtrlHeld = false
 local isCrouching = false
 
---func for checking changes
+--sliding
+
+local isSliding = false
 
 
 -- began
@@ -168,12 +174,38 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
 			hum.WalkSpeed = 20
 		end
 	elseif input.KeyCode == Enum.KeyCode.LeftControl then
+		if isSliding then
+			return
+		else
 		isLCtrlHeld = true
 		isCrouching = true
-		hum.HipHeight -= 1.2
+		hum.HipHeight -= 1
 		hum.WalkSpeed = 7
 		crouchPoseTrack:Play()
 		hum:SetStateEnabled(Enum.HumanoidStateType.Jumping, false)
+		end
+	elseif input.KeyCode == Enum.KeyCode.X then
+		if isCrouching then
+			return
+		end
+	if isSliding == false then
+		isSliding = true
+		
+	slidePoseTrack:Play()
+	hum.HipHeight -= 1.2
+	local velocity = Instance.new("BodyVelocity")
+	velocity.MaxForce = Vector3.new(1,0,1) * 7000
+	velocity.Velocity = root.CFrame.lookVector * 100
+	velocity.Parent = root
+	
+	wait(1)
+	slidePoseTrack:Stop()
+	velocity:Destroy()
+	hum.HipHeight += 1.2
+	
+	wait(1)
+	isSliding = false
+	 end
 	end
 end)
 
@@ -229,15 +261,20 @@ UIS.InputEnded:Connect(function(input, gameProcessed)
 			hum.WalkSpeed = 7
 		end
 	elseif input.KeyCode == Enum.KeyCode.LeftControl then
+		if isSliding then
+			return
+		elseif isCrouching == true then
 		isLCtrlHeld = false
 		isCrouching = false
 		crouchPoseTrack:Stop()
-		hum.HipHeight += 1.2
+		hum.HipHeight += 1
 		hum.WalkSpeed = 16
 		hum:SetStateEnabled(Enum.HumanoidStateType.Jumping, true)
+		end
 		if isShiftHeld then
 			hum.WalkSpeed = 30
 			ForwardsRunTrack:Play()
 		end
+	--elseif input.KeyCode == Enum.KeyCode.X then
 	end
 end)
