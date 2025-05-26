@@ -5,6 +5,19 @@ Two months(ish) to make my final project and prove I can learn on my own.
 You play as an android in the H sector, working to infiltrate facilities and steal critical data. Play in teams of 10 and beat the clock solving puzzles, fighting enemies and finding secrets along the way. Or go rouge and battle against homebase while they play clean up. **Welcome to the Dome.**
 
 
+## Update 05/26/2025 (10:10):
+**PC:**
+Players can slide and the realistic things are implemented like you cant slide if youre crouching and cant crouch mid slide.
+
+Sameday sub-updates:
+- Began working on main menu, saved the code and layout elsewhere and redid with a semi-dynamic design
+- Added rig that displays players avatar
+- 
+
+$${\color{lightblue}Dev \space Diary:}$$
+Omg i pulled another all nighter lmao I said I would rest and animate and I did neither of those things
+
+
 ## Update 05/25/2025 (01:57):
 **PC:**
 Players have no walking animations, cant sprint or crouch. client > server > client file is untouched but everything else is scrapped. I found an easier way to achieve shift lock rather than setting `AutoRotation = false` everytime `C` was held. It was causing issues because the camera could still orbit. Thanks a lot Roblox for depreciating dev controls over shift lock >:[ Anyways, it's done and now I can move over the old animation lines to this new one with SOOO much less `if` `elseif` `else` statements that were just hurting my head lmao.
