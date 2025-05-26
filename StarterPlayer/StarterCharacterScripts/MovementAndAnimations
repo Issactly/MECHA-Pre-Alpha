@@ -188,7 +188,8 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
 		if isCrouching then
 			return
 		end
-		if isSliding == false then
+		-- if not moving then no slide >:[
+		if isSliding == false and (isMovingForwards or isMovingLeft or isMovingRight or isMovingBackwards) then
 			isSliding = true
 
 			slidePoseTrack:Play()
@@ -202,6 +203,8 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
 			slidePoseTrack:Stop()
 			velocity:Destroy()
 			hum.HipHeight += 1.2
+
+			wait(1)
 			isSliding = false
 		end
 	end
