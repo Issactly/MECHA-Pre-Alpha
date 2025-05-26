@@ -1,0 +1,70 @@
+--if the menu needs to be moved, MOVE THE ROOT IN REPLICATED STORAGE, controls are backwards btw
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
+local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local CamPart = ReplicatedStorage:FindFirstChild("camPart"):Clone()
+
+wait(2)
+
+CamPart.Parent = workspace
+CamPart.Position = workspace:FindFirstChild("introPart", true).Position
+Camera.CameraSubject = CamPart
+Camera.CameraType = Enum.CameraType.Scriptable
+
+local moveFactor = 0.0005
+local previousMouseX, previousMouseY = nil, nil
+local MAX_POSITION = 0.5
+local originalPosition = CamPart.Position
+local UI = ReplicatedStorage:FindFirstChild("MenuUI"):Clone()
+UI.Parent = workspace
+
+local targetPosition = originalPosition
+local moving = false
+
+local PlayButton = UI:FindFirstChild("PlayPart").SurfaceGui.TextButton
+
+RunService.RenderStepped:Connect(function()
+	local mouse = player:GetMouse()
+	
+	local screenX = Camera.ViewportSize.X
+	local screenY = Camera.ViewportSize.Y
+	
+	local leftoverScreenX = screenX - mouse.X
+	local leftoverScreenY = screenY - mouse.Y
+	
+	local DistanceFromOriginX = (screenX/2) - leftoverScreenX
+	local DistanceFromOriginY = leftoverScreenY - (screenY/2)
+	
+	local clampedX = math.clamp(DistanceFromOriginX * moveFactor, -MAX_POSITION, MAX_POSITION)
+	local clampedY = math.clamp(DistanceFromOriginY * moveFactor, -MAX_POSITION, MAX_POSITION)
+	
+	if previousMouseX and previousMouseY then
+		local mouseMoved = (DistanceFromOriginX ~= previousMouseX) or (DistanceFromOriginY ~= previousMouseY)
+		if mouseMoved then
+			moving = true
+			targetPosition = originalPosition + Vector3.new(clampedX,clampedY,0)
+		else
+			moving = false
+		end
+	end
+	if moving then
+		CamPart.CFrame = CamPart.CFrame:Lerp(CFrame.new(targetPosition), .1)
+	else
+		CamPart.CFrame = CamPart.CFrame:Lerp(CFrame.new(targetPosition), .2)
+	end
+	
+	local offsetUIX = (screenX/4) * 0.009
+	local offsetUIY = (screenY/5) * 0.009
+	
+	Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(CamPart.Position), .2)
+	local finalTargetPosition = CamPart.Position + Vector3.new(-offsetUIX, -offsetUIY+1, -10)
+	if UI.PrimaryPart then
+		UI:SetPrimaryPartCFrame(UI.PrimaryPart.CFrame:Lerp(CFrame.new(finalTargetPosition) * CFrame.Angles(0, math.rad(23), 0), .1))
+	end
+	
+	previousMouseX = DistanceFromOriginX
+	previousMouseY = DistanceFromOriginY
+end)
