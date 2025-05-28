@@ -5,7 +5,7 @@ Two months(ish) to make my final project and prove I can learn on my own.
 You play as an android in the H sector, working to infiltrate facilities and steal critical data. Play in teams of 10 and beat the clock solving puzzles, fighting enemies and finding secrets along the way. Or go rouge and battle against homebase while they play clean up. **Welcome to the Dome.**
 
 
-## Update 05/27/2025 (11:30):
+## Update 05/27/2025 (23:30):
 **PC:**
 Yay big update this time! The games start place is now just serving as a start menu (totally not because I couldnt figure out how to unlock the camera after closing the menu hahahahaha) I modeled a simple-ish background for the menu, and created 2 idle animations (impatient and swing) for the dummy that clones the characters appearance. The server size is currently set to 1, I will change this once I figure out how to set 1 player per spawn and then have the dummy clone the player closest to it :] The start menu has 3 buttons: 
 - A play button that uses the teleport service to move the player to what will be the 'home'
