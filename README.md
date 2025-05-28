@@ -5,6 +5,22 @@ Two months(ish) to make my final project and prove I can learn on my own.
 You play as an android in the H sector, working to infiltrate facilities and steal critical data. Play in teams of 10 and beat the clock solving puzzles, fighting enemies and finding secrets along the way. Or go rouge and battle against homebase while they play clean up. **Welcome to the Dome.**
 
 
+## Update 05/27/2025 (11:30):
+**PC:**
+Yay big update this time! The games start place is now just serving as a start menu (totally not because I couldnt figure out how to unlock the camera after closing the menu hahahahaha) I modeled a simple-ish background for the menu, and created 2 idle animations (impatient and swing) for the dummy that clones the characters appearance. The server size is currently set to 1, I will change this once I figure out how to set 1 player per spawn and then have the dummy clone the player closest to it :] The start menu has 3 buttons: 
+- A play button that uses the teleport service to move the player to what will be the 'home'
+- A credits button, when pressed changes the `Updates` scroll window to show everyone whos contributed to the game
+- A quit button that uses the `kick()` function and remote event to disconnect the player
+
+Up next:
+- Transfering updates to game
+- Building home set and menus
+- Scripting parts like being able to open the computer, enter pod, open deco mode
+
+$${\color{lightblue}Dev \space Diary:}$$
+Some featres that would be nice, when the player hits esc, have it be the arm menu. camera rotates to front of character and the menu is on the right. the door in the home could open when the player is near enough. For the starter pod, cam should have bust view of character. Can edit colour, swap between models, decorate with stickers (stretch feature). Outside the pod at the computer can order mods and weapons. The wall terminal (stretch feature) has the option to open deco mode to decorate your room with collectibles you've gotten. UGHHHHGHHGKAJSNVA i cant believe i started this project lowkey couldve just gotten min wage at mcdonalds but noooo i wanna join in for capstoneee. I think I'm going to put way less effort in modeling the dorm THANK GOODNESS IM SMART ENOUGH TO KEEP THE LAYOUTS EXACTLY THE SAME FOR ALL OF EM. The only rooms that come with deco are the character rooms. I should be able to do this in like a week tops. I was persuaded to attend the class trip so i wont update tmmr unless i have energy after sixflags lmao. during the car ride im gonna do some concept art for the room because Ive only ever drawn one angle of it on the art of Mac on H1's counter and it shows in the modeling of the start menu LMAO. Anyways Im looking forward to starting the next area! I need to start researching player save data. I want to trrack stats later in the game and have a level system! but ofc thats allll stretch features
+
+
 ## Update 05/26/2025 (10:10):
 **PC:**
 Players can slide and the realistic things are implemented like you cant slide if youre crouching and cant crouch mid slide.
