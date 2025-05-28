@@ -88,20 +88,42 @@ Sameday sub-updates:
 
 
 # Credits
-## Scripts
-- [Issactly](https://github.com/issactly)
+_**Art**_
+
+**- Animation -**
+- [tatyb2016](https://github.com/Issactly)
+	
+**- Character Design -**
+- [tatyb2016](https://github.com/Issactly)
+- UltimateCollection42
+	
+**- Decals -**
+- [LovelySkylar06](https://github.com/aaami988)
+- [tatyb2016](https://github.com/Issactly)
+	
+**- Modeling -**
+- [tatyb2016](https://github.com/Issactly)
+	
+**- World Building -**
+- [LovelySkylar06](https://github.com/aaami988)
+- [tatyb2016](https://github.com/Issactly)
+- UltimateCollection42
+	
+_**Scripting**_
+- [tatyb2016](https://github.com/Issactly)
 
 
-## Art
-- [aaami988](https://github.com/aaami988)
-- [Issactly](https://github.com/issactly)
-
-  
-<!--## Voices-->
-
-## Testers
-**PC:** [aaami988](https://github.com/aaami988)
-
-**Console:** [Ibra-Hud](https://github.com/Ibra-Hud), [KrisNoel23](https://github.com/KrisNoel23)
-
-**Mobile:** ray666666
+_**Testers**_
+- [airbomberofaqua](https://github.com/MarioACrespo)
+- [rhyomai](https://github.com/KrisNoel23)
+- Wheresthemilkat
+- [Xenox5815](https://github.com/Ibra-Hud)
+	
+_**Special Thanks**_
+- [benspector-mls](https://github.com/benspector-mls)
+- [carmensalas14](https://github.com/carmensalas14)
+- [Gonzalomarcylabschool](https://github.com/Gonzalomarcylabschool)
+- iinar_2004
+- Itzyogurldavita
+- nightnolly23
+- [pwacinqz](https://github.com/kurasmagnolia)
