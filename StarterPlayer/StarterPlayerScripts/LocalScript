@@ -1,5 +1,6 @@
 --if the menu needs to be moved, MOVE THE ROOT IN REPLICATED STORAGE, controls are backwards btw
 
+local TS = game:GetService("TeleportService")
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
@@ -7,7 +8,7 @@ local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local CamPart = ReplicatedStorage:FindFirstChild("camPart"):Clone()
 
-wait(2)
+wait(5)
 
 CamPart.Parent = workspace
 CamPart.Position = workspace:FindFirstChild("introPart", true).Position
@@ -24,23 +25,22 @@ UI.Parent = workspace
 local targetPosition = originalPosition
 local moving = false
 
-local PlayButton = UI:FindFirstChild("PlayPart").SurfaceGui.TextButton
 
 RunService.RenderStepped:Connect(function()
 	local mouse = player:GetMouse()
-	
+
 	local screenX = Camera.ViewportSize.X
 	local screenY = Camera.ViewportSize.Y
-	
+
 	local leftoverScreenX = screenX - mouse.X
 	local leftoverScreenY = screenY - mouse.Y
-	
+
 	local DistanceFromOriginX = (screenX/2) - leftoverScreenX
 	local DistanceFromOriginY = leftoverScreenY - (screenY/2)
-	
+
 	local clampedX = math.clamp(DistanceFromOriginX * moveFactor, -MAX_POSITION, MAX_POSITION)
 	local clampedY = math.clamp(DistanceFromOriginY * moveFactor, -MAX_POSITION, MAX_POSITION)
-	
+
 	if previousMouseX and previousMouseY then
 		local mouseMoved = (DistanceFromOriginX ~= previousMouseX) or (DistanceFromOriginY ~= previousMouseY)
 		if mouseMoved then
@@ -55,16 +55,83 @@ RunService.RenderStepped:Connect(function()
 	else
 		CamPart.CFrame = CamPart.CFrame:Lerp(CFrame.new(targetPosition), .2)
 	end
-	
+
 	local offsetUIX = (screenX/4) * 0.009
 	local offsetUIY = (screenY/5) * 0.009
-	
+
 	Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(CamPart.Position), .2)
 	local finalTargetPosition = CamPart.Position + Vector3.new(-offsetUIX, -offsetUIY+1, -10)
 	if UI.PrimaryPart then
 		UI:SetPrimaryPartCFrame(UI.PrimaryPart.CFrame:Lerp(CFrame.new(finalTargetPosition) * CFrame.Angles(0, math.rad(23), 0), .1))
 	end
-	
+
 	previousMouseX = DistanceFromOriginX
 	previousMouseY = DistanceFromOriginY
+end)
+
+local UI2 = ReplicatedStorage:WaitForChild("MenuUI2"):Clone()
+UI2.Parent = workspace
+
+local PlayButton = UI:FindFirstChild("PlayPart").SurfaceGui.TextButton
+local QuitButton = UI:FindFirstChild("Quit Part").SurfaceGui.TextButton
+local CreditButton = UI:FindFirstChild("CreditsPart").SurfaceGui.TextButton
+
+local textBox = UI2.Updates.SurfaceGui.ScrollingFrame.TextLabel
+local titleBox = UI2.TitleB.SurfaceGui.TextBox
+textBox.RichText = true
+
+PlayButton.MouseButton1Click:Connect(function()
+	TS:Teleport(96409208046810)
+end)
+
+CreditButton.MouseButton1Click:Connect(function()
+	titleBox.Text = "Credits"
+	textBox.Text = [[
+	<font size="30"><u><b>Art</b></u></font>
+	<i><b>- Animation -</b></i>
+	tatyb2016
+	
+	<i><b>- Character Design -</b></i>
+	tatyb2016
+	UltimateCollection42
+	
+	<i><b>- Decals -</b></i>
+	LovelySkylar06
+	tatyb2016
+	
+	<i><b>- Modeling -</b></i>
+	tatyb2016
+	
+	<i><b>- World Building -</b></i>
+	LovelySkylar06
+	tatyb2016
+	UltimateCollection42
+	
+	<font size="30"><u><b>Scripting</b></u></font>
+	tatyb2016
+
+	<font size="30"><u><b>Testers</b></u></font>
+	airbomberofaqua
+	rhyomai
+	Wheresthemilkat
+	Xenox5815
+	
+	<font size="30"><u><b>Special Thanks</b></u></font>
+	benspector-mls
+	carmensalas14
+	Gonzalomarcylabschool
+	iinar_2004
+	Itzyogurldavita
+	nightnolly23
+	pwacinqz
+	]]
+end)
+
+--	<u><b>Sound Design</b></u>
+--- Music -
+--	- Enviornments -
+--	- SFX - 
+
+QuitButton.MouseButton1Click:Connect(function()
+	game.ReplicatedStorage.KickPlayerEvent:FireServer()
 end)
