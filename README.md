@@ -4,6 +4,28 @@ Two months(ish) to make my final project and prove I can learn on my own.
 # Game Concept
 You play as an android in the H sector, working to infiltrate facilities and steal critical data. Play in teams of 10 and beat the clock solving puzzles, fighting enemies and finding secrets along the way. Or go rouge and battle against homebase while they play clean up. **Welcome to the Dome.**
 
+## Update 06/1/2025 (20:38):
+**PC:**
+Wow its been a HOT minute. Okay today I was able to do the Pod UI and menus!
+- Clicking play no longer teleports the player to the next place, instead the camera moves to `podCam.position` and maintains the minor movements that follow the mouse.
+- The pod main menu has 4 buttons
+  >Model
+  
+  >Mods
+  
+  >Gear
+  
+  >Stats
+Each has its own sub menu, currently only Model is populated with buttons for the 3 models planned to be in the game.
+- Pressing `tab` while in a sub menu returns the player to the main pod menu. Its planned pressing `tab` while in the main menu will let the player out of the pod and its UI
+- A general and constant UI is planned for guidance, as well as a UI tutorial based on tester feedback
+
+Up next:
+- Figuiring out how to change the players model. (may have to import from blender or pull down from assets
+- General UI
+
+$${\color{lightblue}Dev \space Diary:}$$
+Im so tired ngl but I really wanna do this. Im going home so byeee
 
 ## Update 05/27/2025 (23:30):
 **PC:**
