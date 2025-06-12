@@ -4,7 +4,7 @@ Two months(ish) to make my final project and prove I can learn on my own.
 # Game Concept
 You play as an android in the H sector, working to infiltrate facilities and steal critical data. Play in teams of 10 and beat the clock solving puzzles, fighting enemies and finding secrets along the way. Or go rouge and battle against homebase while they play clean up. **Welcome to the Dome.**
 
-## Update 06/1/2025 (20:38):
+## Update 06/11/2025 (20:38):
 **PC:**
 Wow its been a HOT minute. Okay today I was able to do the Pod UI and menus!
 - Clicking play no longer teleports the player to the next place, instead the camera moves to `podCam.position` and maintains the minor movements that follow the mouse.
