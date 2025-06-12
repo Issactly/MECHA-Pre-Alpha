@@ -3,10 +3,21 @@
 local TS = game:GetService("TeleportService")
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
-local Camera = workspace.CurrentCamera
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
+
+
 local RunService = game:GetService("RunService")
+local UIS = game:GetService("UserInputService") --keyboard/mouse inputs
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+
+local Camera = workspace.CurrentCamera
 local CamPart = ReplicatedStorage:FindFirstChild("camPart"):Clone()
+local PodCam = ReplicatedStorage:FindFirstChild("podCam")
+local MenuRCam = ReplicatedStorage:FindFirstChild("menuRCam")
+local MenuLCam = ReplicatedStorage:FindFirstChild("menuLCam")
+
 
 wait(5)
 
@@ -20,6 +31,8 @@ local previousMouseX, previousMouseY = nil, nil
 local MAX_POSITION = 0.5
 local originalPosition = CamPart.Position
 local UI = ReplicatedStorage:FindFirstChild("MenuUI"):Clone()
+local PODUI = workspace:FindFirstChild("PodUI")
+local PODMENUS = workspace:FindFirstChild("PODMENUS")
 UI.Parent = workspace
 
 local targetPosition = originalPosition
@@ -76,12 +89,17 @@ local PlayButton = UI:FindFirstChild("PlayPart").SurfaceGui.TextButton
 local QuitButton = UI:FindFirstChild("Quit Part").SurfaceGui.TextButton
 local CreditButton = UI:FindFirstChild("CreditsPart").SurfaceGui.TextButton
 
+
+
 local textBox = UI2.Updates.SurfaceGui.ScrollingFrame.TextLabel
 local titleBox = UI2.TitleB.SurfaceGui.TextBox
 textBox.RichText = true
 
 PlayButton.MouseButton1Click:Connect(function()
-	TS:Teleport(96409208046810)
+	--TS:Teleport(96409208046810)
+	targetPosition = PodCam.Position
+	originalPosition = PodCam.Position
+	UI:Destroy()
 end)
 
 CreditButton.MouseButton1Click:Connect(function()
@@ -134,4 +152,146 @@ end)
 
 QuitButton.MouseButton1Click:Connect(function()
 	game.ReplicatedStorage.KickPlayerEvent:FireServer()
+end)
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+--PODUI BUTTONS
+local ModelButton = PODUI:FindFirstChild("ModelsPart").SurfaceGui.TextButton
+local ModButton = PODUI:FindFirstChild("ModsPart").SurfaceGui.TextButton
+local GearButton = PODUI:FindFirstChild("GearPart").SurfaceGui.TextButton
+local StatsButton = PODUI:FindFirstChild("StatsPart").SurfaceGui.TextButton
+
+--PODUI MENUS
+local ModelMenu = PODMENUS:FindFirstChild("ModelsMenu").SurfaceGui
+local ModsMenu = PODMENUS:FindFirstChild("ModsMenu").SurfaceGui
+local GearMenu = PODMENUS:FindFirstChild("GearMenu").SurfaceGui
+local StatsMenu = PODMENUS:FindFirstChild("StatsMenu").SurfaceGui
+
+
+--PODUI FUNCS
+--MODELS
+ModelButton.MouseButton1Click:Connect(function()
+	ModelButton.Visible = false
+	ModButton.Visible = false
+	GearButton.Visible = false
+	StatsButton.Visible = false
+
+	ModelMenu.Enabled = true
+	
+	targetPosition = MenuRCam.Position
+	originalPosition = MenuRCam.Position
+end)
+
+--MODS
+ModButton.MouseButton1Click:Connect(function()
+	ModelButton.Visible = false
+	ModButton.Visible = false
+	GearButton.Visible = false
+	StatsButton.Visible = false
+
+	ModsMenu.Enabled = true
+	
+	targetPosition = MenuRCam.Position
+	originalPosition = MenuRCam.Position
+end)
+
+--GEAR
+GearButton.MouseButton1Click:Connect(function()
+	ModelButton.Visible = false
+	ModButton.Visible = false
+	GearButton.Visible = false
+	StatsButton.Visible = false
+
+	GearMenu.Enabled = true
+	
+	targetPosition = MenuLCam.Position
+	originalPosition = MenuLCam.Position
+end)
+
+--STATS
+StatsButton.MouseButton1Click:Connect(function()
+	ModelButton.Visible = false
+	ModButton.Visible = false
+	GearButton.Visible = false
+	StatsButton.Visible = false
+
+	StatsMenu.Enabled = true
+	
+	targetPosition = MenuLCam.Position
+	originalPosition = MenuLCam.Position
+end)
+
+
+
+UIS.InputBegan:Connect(function(input, gameProcessed)
+	if input.KeyCode == Enum.KeyCode.Tab then
+		if ModelMenu.Enabled then
+			ModelMenu.Enabled = false
+			
+			ModelButton.Visible = true
+			ModButton.Visible = true
+			GearButton.Visible = true
+			StatsButton.Visible = true
+			
+			targetPosition = PodCam.Position
+			originalPosition = PodCam.Position
+	elseif ModsMenu.Enabled then
+			ModsMenu.Enabled = false
+
+			ModelButton.Visible = true
+			ModButton.Visible = true
+			GearButton.Visible = true
+			StatsButton.Visible = true
+			
+			targetPosition = PodCam.Position
+			originalPosition = PodCam.Position
+	elseif GearMenu.Enabled then
+		GearMenu.Enabled = false
+
+		ModelButton.Visible = true
+		ModButton.Visible = true
+		GearButton.Visible = true
+		StatsButton.Visible = true
+			
+			targetPosition = PodCam.Position
+			originalPosition = PodCam.Position
+	elseif StatsMenu.Enabled then
+		StatsMenu.Enabled = false
+
+		ModelButton.Visible = true
+		ModButton.Visible = true
+		GearButton.Visible = true
+		StatsButton.Visible = true
+			
+			targetPosition = PodCam.Position
+			originalPosition = PodCam.Position
+		end
+		end
+end)
+
+UIS.InputEnded:Connect(function(input, gameProcessed)
+		if input.KeyCode == Enum.KeyCode.Tab then
+		end
+end)
+
+hrp.CFrame = CFrame.lookAt(hrp.Position, Vector3.new(PodCam.Position.X, hrp.Position.Y, PodCam.Position.Z))
+
+--mouse rotate for pod (its active before but until I do a proper gui to cover the movement its gonna have to stay)
+local rotateby = math.rad(10)
+UIS.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseWheel then
+		-- 1 right, -1 left (or forwards/back)
+		local direction = input.Position.Z > 0 and 1 or -1
+		hrp.CFrame = hrp.CFrame * CFrame.Angles(0, rotateby * direction, 0)
+	end
 end)
