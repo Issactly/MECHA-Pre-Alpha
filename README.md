@@ -19,6 +19,7 @@ Wow its been a HOT minute. Okay today I was able to do the Pod UI and menus!
 Each has its own sub menu, currently only Model is populated with buttons for the 3 models planned to be in the game.
 - Pressing `tab` while in a sub menu returns the player to the main pod menu. Its planned pressing `tab` while in the main menu will let the player out of the pod and its UI
 - A general and constant UI is planned for guidance, as well as a UI tutorial based on tester feedback
+- Player can use the mouse scroll wheel to rotate the character model while customizing (push forwards to scroll right and pull backwards for left)
 
 Up next:
 - Figuiring out how to change the players model. (may have to import from blender or pull down from assets
