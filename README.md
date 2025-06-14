@@ -6,7 +6,7 @@ You play as an android in the H sector, working to infiltrate facilities and ste
 
 ## Update 06/13/2025 (04:29):
 **PC:**
-HIII I feel like I got a LOT done this session. I may fall asleep writing this so please excuse the difference in commit times <3 My biggest issue aside from the character selector was not being able to move the camera from the center of the screen which was set with the `RunService.RenderStepped:Connect(function()` IN MY MIND it was the clamps but DUH the clamps are called byt the funtion and because its using the `:Connect"` to be rendered I could just `:Disconnect` via having the entire connect and function under a variable `cameraConnect` :
+HIII I feel like I got a LOT done this session. I may fall asleep writing this so please excuse the difference in commit times <3 My biggest issue aside from the character selector was not being able to move the camera from the center of the screen which was set with the `RunService.RenderStepped:Connect(function()` IN MY MIND it was the clamps but DUH the clamps are called by the funtion and because its using the `:Connect` to be rendered I could just `:Disconnect` via having the entire connect and function under a variable `cameraConnect`:
 ```Lua
 if cameraConnection then
 	
