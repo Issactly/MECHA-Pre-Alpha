@@ -1,4 +1,4 @@
-# M.E.C.H.A. Pre-Alpha
+# M.E.C.H.A. Pre-Alpha|| 0.4.2
 Two months(ish) to make my final project and prove I can learn on my own.
 
 # Game Concept
