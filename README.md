@@ -1,8 +1,34 @@
-# M.E.C.H.A. Pre-Alpha|| 0.4.2
+# M.E.C.H.A. Pre-Alpha|| 0.4.3
 Two months(ish) to make my final project and prove I can learn on my own.
 
 # Game Concept
-You play as an android in the H sector, working to infiltrate facilities and steal critical data. Play in teams of 10 and beat the clock solving puzzles, fighting enemies and finding secrets along the way. Or go rouge and battle against homebase while they play clean up. **Welcome to the Dome.**
+You play as an android in the H sector, working to infiltrate facilities and steal critical data. Play in teams of 10 and beat the clock solving puzzles, fighting enemies and finding secrets along the way. **Welcome to the Dome.**
+
+## Update 06/13/2025 (04:29):
+**PC:**
+HIII I feel like I got a LOT done this session. I may fall asleep writing this so please excuse the difference in commit times <3 My biggest issue aside from the character selector was not being able to move the camera from the center of the screen which was set with the `RunService.RenderStepped:Connect(function()` IN MY MIND it was the clamps but DUH the clamps are called byt the funtion and because its using the `:Connect"` to be rendered I could just `:Disconnect` via having the entire connect and function under a variable `cameraConnect` :
+```Lua
+if cameraConnection then
+	
+ 	cameraConnection:Disconnect()
+	cameraConnection = nil
+end
+```
+Not gonna get into the whole reconnection cause its a lil self explanatory just know disconnecting does use a `:Destroy()` and you have to make sure you're always using clones!
+
+- Player now has a general Instructional UI will be updated soon to always display only necessary info
+- Player can enter and exit pod with correct camera positioning!!!
+- Player now has min and max camera zoom values (considering setting a permanant distance) as well as an offset only visible when outside of various menus
+- 
+
+Up next:
+- Theres a bug where hitting tab in a sub menu disables rotation too early so Ill get that fixed in the next patch
+- General UI sometimes showing less or more info than needed
+- Building the home area very simple tho as I wanna keep moving with the mechanics
+- Hitting play will enter camera cutscene that makes the transition from menu to pod visually pleasing :] (plus get experience with more camera controls!
+
+$${\color{lightblue}Dev \space Diary:}$$
+I feel like I said a lot in the update chunk but whatevs. Again I think I moved pretty quick yesterday or at least it feels like a weight is off me since I figured out camera connections a function which I can connect to any part in a matter of seconds! Another thing I want to do is have a pause menu which means I need to figure out how to remove the default `Esc` to the platform menu and guide it to my own in game menu. I also need to add a part I believe to the player to use as the camera reference ORRRR I could probably have a pause part that moves to a specific distance away from the characters head `CFrame`? I dunno its something to look into. Once I move into the  main world Im unsure how to split it up... How do I move players together into specific servers? Each game mode I guess is a different place as to not cram servers? which hey, if i make the same maps but change the layouts i can then do a math.random for it to select which map instead of getting into the world of map generation. I guess you pick a game mode and then get taken to the waiting area which would be the transport hub? you could walk around until the proper number of players join? Honestly a `wait()` could work to delay teleportation? but it wouldnt be affected by players joining or leaving... okay wait so home area right off main menu, from home area you can find the secret area, explore character rooms, in the future be able to decorate your own room. then from the terminal you'll be able to pick a mission. from home to mission you get taken to the transport area where you wait for players to join. transport is just the same building as home but outside the main doors. simillar to star wars rise of the resisitance ride's loading zone! once the players are selected a client side cutscene plays before teleporting the group to a random map. they play the map, get their XP and can play again or go home. That sounds pretty simple on paper! Obviously ill keep updating here and you'll see if its going great or if im on my 4th crashout of the day but hopefully things will keep going smoothly. byeeeeeeee.
 
 ## Update 06/11/2025 (20:38):
 **PC:**
@@ -22,7 +48,7 @@ Each has its own sub menu, currently only Model is populated with buttons for th
 - Player can use the mouse scroll wheel to rotate the character model while customizing (push forwards to scroll right and pull backwards for left)
 
 Up next:
-- Figuiring out how to change the players model. (may have to import from blender or pull down from assets
+- Figuiring out how to change the players model. (may have to import from blender or pull down from assets)
 - General UI
 
 $${\color{lightblue}Dev \space Diary:}$$
