@@ -18,7 +18,7 @@ Not gonna get into the whole reconnection cause its a lil self explanatory just 
 
 - Player now has a general Instructional UI will be updated soon to always display only necessary info
 - Player can enter and exit pod with correct camera positioning!!!
-- Player now has min and max camera zoom values (considering setting a permanant distance) as well as an offset only visible when outside of various menus
+- Player now has min and max camera zoom values (considering setting a static distance) as well as an offset only visible when outside of various menus
 - 
 
 Up next:
