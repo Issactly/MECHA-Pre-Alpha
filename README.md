@@ -11,6 +11,9 @@ We are back gun blazing baybee! No for reals I got 41 days to finish this and I 
 Up next:
 - Debug pod completely for Geek Out
 - Finish building hub, exclude character rooms bc i said so and like thats not functionally important
+- Finish moving files to second place, finish the maths for attacks/dmg
+- Create UI's for health, shield, general controls in game
+- Stretch feature: Min Map :0 would totes be cool!
 
 ## Update 06/13/2025 (04:29):
 **PC:**
