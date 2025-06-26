@@ -6,7 +6,7 @@ You play as an android in the H sector, working to infiltrate facilities and ste
 
 ## Update 06/13/2025 (04:29):
 **PC:**
-We are back gun blazing baybee! No for reals I got 41 days to finish this and I know I could do it all in 2 weeks if I didn't stop for rests but lowkey figting depression and a tumour is a double whammy I don't want to triple lmaoooo. So whats new? (i say getting more unprofessional by the day) Well the pod is physically being built now. Some bugs it had are being fixed today as well before todays Geek Out. The second place where you actually play the game is being cleared as well to transfer a few scripts I worked on in the main world but dont need to keep there. There was a memory leak issue happening too which on a small scale isnt an issue but potetially duplicated with even 5 players, it could affect serverside performance greatly. (Unsure if I should be saying this haha, pls don't hack my game)
+We are back gun blazing baybee! No for reals I got 41 days to finish this and I know I could do it all in 2 weeks if I didn't stop for rests but lowkey not good (edited tmi out lmaoo) So whats new? (i say getting more unprofessional by the day) Well the pod is physically being built now. Some bugs it had are being fixed today as well before todays Geek Out. The second place where you actually play the game is being cleared as well to transfer a few scripts I worked on in the main world but dont need to keep there. There was a memory leak issue happening too which on a small scale isnt an issue but potetially duplicated with even 5 players, it could affect serverside performance greatly. (Unsure if I should be saying this haha, pls don't hack my game)
 
 Up next:
 - Debug pod completely for Geek Out
