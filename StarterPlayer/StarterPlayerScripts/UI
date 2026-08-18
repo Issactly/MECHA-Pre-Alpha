@@ -1,0 +1,185 @@
+--TS:Teleport(96409208046810)
+
+-- if the menu needs to be moved, MOVE THE ROOT IN REPLICATED STORAGE, it moves in like reverse
+
+local TS = game:GetService("TeleportService")
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
+
+local RunService = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Camera = workspace.CurrentCamera
+local CamPart = ReplicatedStorage:FindFirstChild("camPart"):Clone()
+
+local hum = character:WaitForChild("Humanoid")
+
+local cameraConnection
+local moveFactor = 0.0005
+local previousMouseX, previousMouseY = nil, nil
+local MAX_POSITION = 0.5
+local originalPosition
+local targetPosition
+local moving = false
+
+local UI = ReplicatedStorage:FindFirstChild("MenuUI"):Clone()
+UI.Parent = workspace
+local UI2 = ReplicatedStorage:FindFirstChild("MenuUI2"):Clone()
+UI2.Parent = workspace
+
+function shiftLock(active)
+	if active then
+		hum.CameraOffset = Vector3.new(4,0,0)
+		hum.AutoRotate = false
+		RunService:BindToRenderStep("ShiftLock", Enum.RenderPriority.Character.Value, function()
+			UIS.MouseBehavior = Enum.MouseBehavior.LockCenter
+			local _, y = workspace.CurrentCamera.CFrame.Rotation:ToEulerAnglesYXZ()
+			hrp.CFrame = CFrame.new(hrp.Position) * CFrame.Angles(0,y,0)
+		end)
+	else
+		hum.CameraOffset = Vector3.new(0,0,0)
+		RunService:UnbindFromRenderStep("ShiftLock")
+		UIS.MouseBehavior = Enum.MouseBehavior.Default
+		hum.AutoRotate = true
+	end
+end
+
+local function setupCameraMovement(cameraPart, uiElement)
+	if cameraConnection then
+		cameraConnection:Disconnect()
+		cameraConnection = nil
+	end
+
+	originalPosition = cameraPart.Position
+	targetPosition = cameraPart.Position
+
+	cameraConnection = RunService.RenderStepped:Connect(function()
+		local mouse = player:GetMouse()
+		local screenX = Camera.ViewportSize.X
+		local screenY = Camera.ViewportSize.Y
+		local leftoverScreenX = screenX - mouse.X
+		local leftoverScreenY = screenY - mouse.Y
+		local DistanceFromOriginX = (screenX/2) - leftoverScreenX
+		local DistanceFromOriginY = leftoverScreenY - (screenY/2)
+		local clampedX = math.clamp(DistanceFromOriginX * moveFactor, -MAX_POSITION, MAX_POSITION)
+		local clampedY = math.clamp(DistanceFromOriginY * moveFactor, -MAX_POSITION, MAX_POSITION)
+
+		if previousMouseX and previousMouseY then
+			local mouseMoved = (DistanceFromOriginX ~= previousMouseX) or (DistanceFromOriginY ~= previousMouseY)
+			if mouseMoved then
+				moving = true
+				targetPosition = originalPosition + Vector3.new(clampedX,clampedY,0)
+			else
+				moving = false
+			end
+		end
+
+		if moving then
+			cameraPart.CFrame = cameraPart.CFrame:Lerp(CFrame.new(targetPosition), .1)
+		else
+			cameraPart.CFrame = cameraPart.CFrame:Lerp(CFrame.new(targetPosition), .2)
+		end
+
+		local offsetUIX = (screenX/4) * 0.009
+		local offsetUIY = (screenY/5) * 0.009
+
+		Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(cameraPart.Position), .2)
+
+		if uiElement and uiElement.PrimaryPart then
+			local finalTargetPosition = cameraPart.Position + Vector3.new(-offsetUIX, -offsetUIY+1, -10)
+			uiElement:SetPrimaryPartCFrame(uiElement.PrimaryPart.CFrame:Lerp(CFrame.new(finalTargetPosition) * CFrame.Angles(0,math.rad(23), 0), .1))
+		end
+		previousMouseX = DistanceFromOriginX
+		previousMouseY = DistanceFromOriginY
+	end)
+end
+
+wait(5)
+CamPart.Parent = workspace
+CamPart.Position = workspace:FindFirstChild("introPart", true).Position
+Camera.CameraSubject = CamPart
+Camera.CameraType = Enum.CameraType.Scriptable
+setupCameraMovement(CamPart, UI)
+
+_G.PODUIOPEN = true
+hum.WalkSpeed = 0
+hum:SetStateEnabled(Enum.HumanoidStateType.Jumping, false)
+
+local PlayButton = UI:FindFirstChild("PlayPart").SurfaceGui.TextButton
+local QuitButton = UI:FindFirstChild("Quit Part").SurfaceGui.TextButton
+local CreditButton = UI:FindFirstChild("CreditsPart").SurfaceGui.TextButton
+
+local textBox = UI2.Updates.SurfaceGui.ScrollingFrame.TextLabel
+local titleBox = UI2.TitleB.SurfaceGui.TextBox
+textBox.RichText = true
+
+PlayButton.MouseButton1Click:Connect(function()
+	if cameraConnection then
+		cameraConnection:Disconnect()
+		cameraConnection = nil
+	end
+
+	UI:Destroy()
+	UI2:Destroy()
+	CamPart:Destroy()
+
+	Camera.CameraType = Enum.CameraType.Custom
+	Camera.CameraSubject = character:WaitForChild("Humanoid")
+	Players.LocalPlayer.CameraMaxZoomDistance = 9
+	Players.LocalPlayer.CameraMinZoomDistance = 3
+
+	_G.PODUIOPEN = false
+	hum.WalkSpeed = 16
+	hum:SetStateEnabled(Enum.HumanoidStateType.Jumping, true)
+	shiftLock(true)
+end)
+
+CreditButton.MouseButton1Click:Connect(function()
+	titleBox.Text = "Credits"
+	textBox.Text = [[
+	<font size="30"><u><b>Art</b></u></font>
+	<i><b>- Animation -</b></i>
+	tatyb2016
+	
+	<i><b>- Character Design -</b></i>
+	tatyb2016
+	UltimateCollection42
+	
+	<i><b>- Decals -</b></i>
+	LovelySkylar06
+	tatyb2016
+	
+	<i><b>- Modeling -</b></i>
+	tatyb2016
+	
+	<i><b>- World Building -</b></i>
+	LovelySkylar06
+	tatyb2016
+	UltimateCollection42
+	
+	<font size="30"><u><b>Scripting</b></u></font>
+	tatyb2016
+
+	<font size="30"><u><b>Testers</b></u></font>
+	airbomberofaqua
+	rhyomai
+	Wheresthemilkat
+	Xenox5815
+	
+	<font size="30"><u><b>Special Thanks</b></u></font>
+	benspector-mls
+	carmensalas14
+	Gonzalomarcylabschool
+	iinar_2004
+	Itzyogurldavita
+	nightnolly23
+	pwacinqz
+	]]
+end)
+
+QuitButton.MouseButton1Click:Connect(function()
+	game.ReplicatedStorage.KickPlayerEvent:FireServer()
+end)
