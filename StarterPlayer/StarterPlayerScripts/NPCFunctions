@@ -1,0 +1,183 @@
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local player = Players.LocalPlayer
+local RemoteEvent = ReplicatedStorage:WaitForChild("EnterNPCEvent")
+
+local currentNPC = nil
+local cameraConnection = nil
+local inNPC = false
+local currentUIState = "Playing"
+
+local moveFactor = 0.0005
+local previousMouseX, previousMouseY = nil, nil
+local MAX_POSITION = 0.5
+local originalPosition
+local targetPosition
+local moving = false
+
+local UIState = {
+	NPC_MAIN = "NPCMain",
+	PLAYING = "Playing"
+}
+
+local function setupCameraMovement(cameraPart)
+	if cameraConnection then
+		cameraConnection:Disconnect()
+		cameraConnection = nil
+	end
+
+	originalPosition = cameraPart.Position
+	targetPosition = cameraPart.Position
+	local Camera = workspace.CurrentCamera
+
+	cameraConnection = RunService.RenderStepped:Connect(function()
+		local mouse = player:GetMouse()
+		local screenX = Camera.ViewportSize.X
+		local screenY = Camera.ViewportSize.Y
+		local DistanceFromOriginX = (screenX/2) - (screenX - mouse.X)
+		local DistanceFromOriginY = (screenY - mouse.Y) - (screenY/2)
+		local clampedX = math.clamp(DistanceFromOriginX * moveFactor, -MAX_POSITION, MAX_POSITION)
+		local clampedY = math.clamp(DistanceFromOriginY * moveFactor, -MAX_POSITION, MAX_POSITION)
+
+		if previousMouseX and previousMouseY then
+			moving = (DistanceFromOriginX ~= previousMouseX) or (DistanceFromOriginY ~= previousMouseY)
+		end
+
+		if moving then
+			targetPosition = originalPosition + Vector3.new(clampedX, clampedY, 0)
+			cameraPart.CFrame = cameraPart.CFrame:Lerp(CFrame.new(targetPosition), .1)
+		else
+			cameraPart.CFrame = cameraPart.CFrame:Lerp(CFrame.new(targetPosition), .2)
+		end
+
+		Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(cameraPart.Position), .2)
+
+		previousMouseX = DistanceFromOriginX
+		previousMouseY = DistanceFromOriginY
+	end)
+end
+
+local function toggleShiftLock(enabled)
+	if enabled then
+		RunService:BindToRenderStep("ShiftLock", Enum.RenderPriority.Character.Value, function()
+			UIS.MouseBehavior = Enum.MouseBehavior.LockCenter
+			local character = player.Character
+			if character then
+				local hrp = character:FindFirstChild("HumanoidRootPart")
+				if hrp then
+					local _, y = workspace.CurrentCamera.CFrame.Rotation:ToEulerAnglesYXZ()
+					hrp.CFrame = CFrame.new(hrp.Position) * CFrame.Angles(0, y, 0)
+				end
+			end
+		end)
+	else
+		RunService:UnbindFromRenderStep("ShiftLock")
+	end
+end
+
+local function exitNPC()
+	if not inNPC then return end
+	inNPC = false
+
+	-- Disable the NPC UI when exiting
+	if currentNPC then
+		local NPCUI = currentNPC:FindFirstChild("NPCUI") or currentNPC:FindFirstChild("Head"):FindFirstChild("NPCUI")
+		if NPCUI then
+			local IntroPart = NPCUI:FindFirstChild("IntroPart")
+			if IntroPart then
+				local SurfaceGui = IntroPart:FindFirstChild("SurfaceGui")
+				if SurfaceGui then
+					SurfaceGui.Enabled = false
+				end
+			end
+		end
+	end
+
+	currentNPC = nil
+	currentUIState = UIState.PLAYING
+
+	local character = player.Character
+	if not character then return end
+
+	local hrp = character:FindFirstChild("HumanoidRootPart")
+	local hum = character:FindFirstChild("Humanoid")
+	local Camera = workspace.CurrentCamera
+
+	if not hrp or not hum then return end
+
+	_G.PODUIOPEN = false
+	hum.WalkSpeed = 16
+	hum:SetStateEnabled(Enum.HumanoidStateType.Jumping, true)
+	hum.CameraOffset = Vector3.new(4, 0, 0)
+	hum.AutoRotate = false
+
+	toggleShiftLock(true)
+
+	if cameraConnection then
+		cameraConnection:Disconnect()
+		cameraConnection = nil
+	end
+
+	Camera.CameraType = Enum.CameraType.Custom
+	Camera.CameraSubject = hum
+	player.CameraMaxZoomDistance = 9
+	player.CameraMinZoomDistance = 3
+end
+
+local function enterNPC(npcModel)
+	if inNPC then return end
+	inNPC = true
+	currentNPC = npcModel
+
+	local npcoddy = npcModel:FindFirstChild("npcoddy") or npcModel
+	local NPCUI = npcModel:FindFirstChild("NPCUI") or npcModel:FindFirstChild("Head"):FindFirstChild("NPCUI")
+	local IntroPart = NPCUI:FindFirstChild("IntroPart")
+	local SurfaceGui = IntroPart:FindFirstChild("SurfaceGui")
+	local TextBox = SurfaceGui:FindFirstChild("TextBox")
+
+	local character = player.Character
+	if not character then return end
+
+	local hrp = character:FindFirstChild("HumanoidRootPart")
+	local hum = character:FindFirstChild("Humanoid")
+	local Camera = workspace.CurrentCamera
+
+	SurfaceGui.Enabled = true
+	TextBox.Visible = true
+
+	local npcPosition = npcModel:GetPivot().Position
+	character:MoveTo(npcPosition + Vector3.new(-4, 0, 3))
+
+	_G.PODUIOPEN = true
+	hum.WalkSpeed = 0
+	hum:SetStateEnabled(Enum.HumanoidStateType.Jumping, false)
+	hum.CameraOffset = Vector3.new(0, 0, 0)
+	hum.AutoRotate = true
+
+	toggleShiftLock(false)
+	UIS.MouseBehavior = Enum.MouseBehavior.Default
+
+	Camera.CameraSubject = npcoddy
+	Camera.CameraType = Enum.CameraType.Scriptable
+	setupCameraMovement(npcoddy)
+
+	currentUIState = UIState.NPC_MAIN
+	hrp.CFrame = CFrame.lookAt(hrp.Position, Vector3.new(npcoddy.Position.X, hrp.Position.Y, npcoddy.Position.Z)) * CFrame.Angles(0, math.pi * 0.6, 0)
+
+end
+
+UIS.InputBegan:Connect(function(input, gameProcessed)
+	if input.KeyCode == Enum.KeyCode.Tab and inNPC then
+		if currentUIState == UIState.NPC_MAIN then
+			exitNPC()
+		end
+	end
+end)
+
+RemoteEvent.OnClientEvent:Connect(function(npcModel)
+	print("Received NPC enter event for: ", npcModel.Name)
+	enterNPC(npcModel)
+end)
