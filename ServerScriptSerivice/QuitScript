@@ -1,0 +1,10 @@
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local KickEvent = Instance.new("RemoteEvent")
+KickEvent.Name = "KickPlayerEvent"
+KickEvent.Parent = ReplicatedStorage
+
+KickEvent.OnServerEvent:Connect(function(player)
+	player:Kick("Quit Game")
+end)
