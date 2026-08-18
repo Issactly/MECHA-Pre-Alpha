@@ -1,0 +1,283 @@
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local player = Players.LocalPlayer
+local RemoteEvent = ReplicatedStorage:WaitForChild("EnterPodEvent")
+
+local currentPod = nil
+local cameraConnection = nil
+local inPod = false
+local currentUIState = "Playing"
+local menuConnections = {}
+
+local moveFactor = 0.0005
+local previousMouseX, previousMouseY = nil, nil
+local MAX_POSITION = 0.5
+local originalPosition
+local targetPosition
+local moving = false
+
+local UIState = {
+	POD_MAIN = "PodMain",
+	POD_MODELS = "PodModels",
+	POD_MODS = "PodMods",
+	POD_GEAR = "PodGear",
+	POD_STATS = "PodStats",
+	PLAYING = "Playing"
+}
+
+local function setupCameraMovement(cameraPart)
+	if cameraConnection then
+		cameraConnection:Disconnect()
+		cameraConnection = nil
+	end
+
+	originalPosition = cameraPart.Position
+	targetPosition = cameraPart.Position
+	local Camera = workspace.CurrentCamera
+
+	cameraConnection = RunService.RenderStepped:Connect(function()
+		local mouse = player:GetMouse()
+		local screenX = Camera.ViewportSize.X
+		local screenY = Camera.ViewportSize.Y
+		local DistanceFromOriginX = (screenX/2) - (screenX - mouse.X)
+		local DistanceFromOriginY = (screenY - mouse.Y) - (screenY/2)
+		local clampedX = math.clamp(DistanceFromOriginX * moveFactor, -MAX_POSITION, MAX_POSITION)
+		local clampedY = math.clamp(DistanceFromOriginY * moveFactor, -MAX_POSITION, MAX_POSITION)
+
+		if previousMouseX and previousMouseY then
+			moving = (DistanceFromOriginX ~= previousMouseX) or (DistanceFromOriginY ~= previousMouseY)
+		end
+
+		if moving then
+			targetPosition = originalPosition + Vector3.new(clampedX, clampedY, 0)
+			cameraPart.CFrame = cameraPart.CFrame:Lerp(CFrame.new(targetPosition), .1)
+		else
+			cameraPart.CFrame = cameraPart.CFrame:Lerp(CFrame.new(targetPosition), .2)
+		end
+
+		Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(cameraPart.Position), .2)
+
+		previousMouseX = DistanceFromOriginX
+		previousMouseY = DistanceFromOriginY
+	end)
+end
+
+local function cleanupMenuConnections()
+	for _, connection in ipairs(menuConnections) do
+		connection:Disconnect()
+	end
+	menuConnections = {}
+end
+
+local function toggleShiftLock(enabled)
+	if enabled then
+		RunService:BindToRenderStep("ShiftLock", Enum.RenderPriority.Character.Value, function()
+			UIS.MouseBehavior = Enum.MouseBehavior.LockCenter
+			local character = player.Character
+			if character then
+				local hrp = character:FindFirstChild("HumanoidRootPart")
+				if hrp then
+					local _, y = workspace.CurrentCamera.CFrame.Rotation:ToEulerAnglesYXZ()
+					hrp.CFrame = CFrame.new(hrp.Position) * CFrame.Angles(0, y, 0)
+				end
+			end
+		end)
+	else
+		RunService:UnbindFromRenderStep("ShiftLock")
+	end
+end
+
+
+
+local function exitPod()
+	if not inPod then return end
+	inPod = false
+	currentPod = nil
+	currentUIState = UIState.PLAYING
+
+	cleanupMenuConnections()
+
+	local character = player.Character
+	if not character then return end
+
+	local hrp = character:FindFirstChild("HumanoidRootPart")
+	local hum = character:FindFirstChild("Humanoid")
+	local Camera = workspace.CurrentCamera
+
+	if not hrp or not hum then return end
+
+	_G.PODUIOPEN = false
+	hum.WalkSpeed = 16
+	hum:SetStateEnabled(Enum.HumanoidStateType.Jumping, true)
+	hum.CameraOffset = Vector3.new(4, 0, 0)
+	hum.AutoRotate = false
+
+	toggleShiftLock(true)
+
+	if cameraConnection then
+		cameraConnection:Disconnect()
+		cameraConnection = nil
+	end
+
+	Camera.CameraType = Enum.CameraType.Custom
+	Camera.CameraSubject = hum
+	player.CameraMaxZoomDistance = 9
+	player.CameraMinZoomDistance = 3
+end
+
+local function getPodUIElements(podModel)
+	local PODUI = podModel:FindFirstChild("PODUI")
+	local PODMENUS = podModel:FindFirstChild("PODMENUS")
+
+	if not PODUI or not PODMENUS then return nil end
+
+	local elements = {
+		buttons = {},
+		menus = {}
+	}
+
+	local buttonParts = {"ModelsPart", "ModsPart", "GearPart", "StatsPart"}
+	local menuNames = {"ModelsMenu", "ModsMenu", "GearMenu", "StatsMenu"}
+
+	for i, partName in ipairs(buttonParts) do
+		local part = PODUI:FindFirstChild(partName)
+		if part and part:FindFirstChild("SurfaceGui") then
+			elements.buttons[i] = part.SurfaceGui.TextButton
+		end
+	end
+
+	for i, menuName in ipairs(menuNames) do
+		local menu = PODMENUS:FindFirstChild(menuName)
+		if menu and menu:FindFirstChild("SurfaceGui") then
+			elements.menus[i] = menu.SurfaceGui
+		end
+	end
+
+	return elements
+end
+
+local function enterPod(podModel)
+	if inPod then return end
+	inPod = true
+	currentPod = podModel
+	local poddy = podModel:FindFirstChild("poddy") or podModel
+	local elements = getPodUIElements(podModel)
+
+	if not elements then
+		print("PODUI or PODMENUS not found in pod model!")
+		inPod = false
+		return
+	end
+
+	local character = player.Character
+	if not character then return end
+
+	local hrp = character:FindFirstChild("HumanoidRootPart")
+	local hum = character:FindFirstChild("Humanoid")
+
+	if not hrp or not hum then return end
+
+	local Camera = workspace.CurrentCamera
+
+	-- Show UI
+	for _, button in ipairs(elements.buttons) do
+		if button then button.Visible = true end
+	end
+
+	-- tp player to pod
+	local podPosition = podModel:GetPivot().Position
+	character:MoveTo(podPosition + Vector3.new(0, 0, 2))
+
+	_G.PODUIOPEN = true
+	hum.WalkSpeed = 0
+	hum:SetStateEnabled(Enum.HumanoidStateType.Jumping, false)
+	hum.CameraOffset = Vector3.new(0, 0, 0)
+	hum.AutoRotate = true
+
+	toggleShiftLock(false)
+	UIS.MouseBehavior = Enum.MouseBehavior.Default
+
+	Camera.CameraSubject = poddy
+	Camera.CameraType = Enum.CameraType.Scriptable
+	setupCameraMovement(poddy)
+
+	currentUIState = UIState.POD_MAIN
+
+	local function closePodMenus()
+		for _, menu in ipairs(elements.menus) do
+			if menu then menu.Enabled = false end
+		end
+		for _, button in ipairs(elements.buttons) do
+			if button then button.Visible = true end
+		end
+		currentUIState = UIState.POD_MAIN
+	end
+
+	-- button connections
+	local menuStates = {UIState.POD_MODELS, UIState.POD_MODS, UIState.POD_GEAR, UIState.POD_STATS}
+
+	for i, button in ipairs(elements.buttons) do
+		if button and elements.menus[i] then
+			local connection = button.MouseButton1Click:Connect(function()
+				for _, b in ipairs(elements.buttons) do
+					if b then b.Visible = false end
+				end
+				elements.menus[i].Enabled = true
+				currentUIState = menuStates[i]
+			end)
+			table.insert(menuConnections, connection)
+		end
+	end
+
+	-- Face pod camera
+	hrp.CFrame = CFrame.lookAt(hrp.Position, Vector3.new(poddy.Position.X, hrp.Position.Y, poddy.Position.Z))
+end
+
+-- manu tabbing
+UIS.InputBegan:Connect(function(input, gameProcessed)
+	if input.KeyCode == Enum.KeyCode.Tab and inPod then
+		if currentUIState ~= UIState.POD_MAIN and currentUIState ~= UIState.PLAYING then
+			-- Close current menu
+			local currentPodModel = currentPod
+			if currentPodModel then
+				local elements = getPodUIElements(currentPodModel)
+				if elements then
+					for _, menu in ipairs(elements.menus) do
+						if menu then menu.Enabled = false end
+					end
+					for _, button in ipairs(elements.buttons) do
+						if button then button.Visible = true end
+					end
+				end
+			end
+			currentUIState = UIState.POD_MAIN
+		elseif currentUIState == UIState.POD_MAIN then
+			exitPod()
+		end
+	end
+end)
+
+-- character rotation
+local rotateby = math.rad(10)
+UIS.InputChanged:Connect(function(input)
+	if inPod and currentUIState ~= UIState.PLAYING then
+		if input.UserInputType == Enum.UserInputType.MouseWheel then
+			local direction = input.Position.Z > 0 and 1 or -1
+			local character = player.Character
+			if character then
+				local hrp = character:FindFirstChild("HumanoidRootPart")
+				if hrp then
+					hrp.CFrame = hrp.CFrame * CFrame.Angles(0, rotateby * direction, 0)
+				end
+			end
+		end
+	end
+end)
+
+RemoteEvent.OnClientEvent:Connect(function(podModel)
+	print("Received pod enter event for: ", podModel.Name)
+	enterPod(podModel)
+end)
