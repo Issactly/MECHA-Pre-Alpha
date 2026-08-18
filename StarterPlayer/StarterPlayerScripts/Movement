@@ -1,0 +1,331 @@
+-- get current player
+local allplayers = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+local lp = allplayers.LocalPlayer
+local char = lp.Character or lp.CharacterAdded:Wait()
+
+-- acess body
+local hum = char:WaitForChild("Humanoid") --nucleus of movement
+local root = char:WaitForChild("HumanoidRootPart") -- char center
+
+--animations
+local animator = hum:WaitForChild("Animator")
+--forwards
+local ForwardsRunAnimation = Instance.new("Animation")
+local ForwardsWalkAnimation = Instance.new("Animation")
+local ForwardsCrouchAnimation = Instance.new("Animation")
+local ForwardsJumpAnimation = Instance.new("Animation")
+--backwards
+local BackwardsRunAnimation = Instance.new("Animation")
+local BackwardsWalkAnimation = Instance.new("Animation")
+local BackwardsCrouchAnimation = Instance.new("Animation")
+local BackwardsJumpAnimation = Instance.new("Animation")
+--left
+local LeftRunAnimation = Instance.new("Animation")
+local LeftWalkAnimation = Instance.new("Animation")
+local LeftCrouchAnimation = Instance.new("Animation")
+local LeftJumpAnimation = Instance.new("Animation")
+-- right
+local RightRunAnimation = Instance.new("Animation")
+local RightWalkAnimation = Instance.new("Animation")
+local RightCrouchAnimation = Instance.new("Animation")
+local RightJumpAnimation = Instance.new("Animation")
+--idle
+local CrouchIdleAnimation = Instance.new("Animation")
+local StandIdleAnimation = Instance.new("Animation")
+local SlideDirectionalAnimation = Instance.new("Animation")
+
+--name animation IDs
+--forwards
+ForwardsRunAnimation.AnimationId = "rbxassetid://108999179774030"
+ForwardsWalkAnimation.AnimationId = "rbxassetid://88782065952494"
+ForwardsCrouchAnimation.AnimationId = "rbxassetid://108999179774030"
+ForwardsJumpAnimation.AnimationId = "rbxassetid://108999179774030"
+--backwards
+BackwardsRunAnimation.AnimationId = "rbxassetid://108999179774030"
+BackwardsWalkAnimation.AnimationId = "rbxassetid://90167336530499"
+BackwardsCrouchAnimation.AnimationId = "rbxassetid://108999179774030"
+BackwardsJumpAnimation.AnimationId = "rbxassetid://108999179774030"
+--left
+LeftRunAnimation.AnimationId = "rbxassetid://98205979853674"
+LeftWalkAnimation.AnimationId = "rbxassetid://139349784706953"
+LeftCrouchAnimation.AnimationId = "rbxassetid://108999179774030"
+LeftJumpAnimation.AnimationId = "rbxassetid://108999179774030"
+--right
+RightRunAnimation.AnimationId = "rbxassetid://106487017963781"
+RightWalkAnimation.AnimationId = "rbxassetid://78920439156519"
+RightCrouchAnimation.AnimationId = "rbxassetid://108999179774030"
+RightJumpAnimation.AnimationId = "rbxassetid://108999179774030"
+--idle
+CrouchIdleAnimation.AnimationId = "rbxassetid://111160791127334"
+StandIdleAnimation.AnimationId = "rbxassetid://83699305365544"
+SlideDirectionalAnimation.AnimationId = "rbxassetid://99512521009826"
+
+-- set tracks
+--forwards
+local ForwardsRunTrack = animator:LoadAnimation(ForwardsRunAnimation)
+local ForwardsWalkTrack = animator:LoadAnimation(ForwardsWalkAnimation)
+local ForwardsCrouchTrack = animator:LoadAnimation(ForwardsCrouchAnimation)
+local ForwardsJumpTrack = animator:LoadAnimation(ForwardsJumpAnimation)
+--backwards
+local BackwardsRunTrack = animator:LoadAnimation(BackwardsRunAnimation)
+local BackwardsWalkTrack = animator:LoadAnimation(BackwardsWalkAnimation)
+local BackwardsCrouchTrack = animator:LoadAnimation(BackwardsCrouchAnimation)
+local BackwardsJumpTrack = animator:LoadAnimation(BackwardsJumpAnimation)
+--left
+local LeftRunTrack = animator:LoadAnimation(LeftRunAnimation)
+local LeftWalkTrack = animator:LoadAnimation(LeftWalkAnimation)
+local LeftCrouchTrack = animator:LoadAnimation(LeftCrouchAnimation)
+local LeftJumpTrack = animator:LoadAnimation(LeftJumpAnimation)
+--right
+local RightRunTrack = animator:LoadAnimation(RightRunAnimation)
+local RightWalkTrack = animator:LoadAnimation(RightWalkAnimation)
+local RightCrouchTrack = animator:LoadAnimation(RightCrouchAnimation)
+local RightJumpTrack = animator:LoadAnimation(RightJumpAnimation)
+--idle
+local CrouchIdleTrack = animator:LoadAnimation(CrouchIdleAnimation)
+local StandIdleTrack = animator:LoadAnimation(StandIdleAnimation)
+local SlideDirectionalTrack = animator:LoadAnimation(SlideDirectionalAnimation)
+
+--loops
+ForwardsRunTrack.Looped=true
+ForwardsWalkTrack.Looped=true
+ForwardsCrouchTrack.Looped=true
+ForwardsJumpTrack.Looped=false
+BackwardsRunTrack.Looped=true
+BackwardsWalkTrack.Looped=true
+BackwardsCrouchTrack.Looped=true
+BackwardsJumpTrack.Looped=false
+LeftRunTrack.Looped=true
+LeftWalkTrack.Looped=true
+LeftCrouchTrack.Looped=true
+LeftJumpTrack.Looped=false
+RightRunTrack.Looped=true
+RightWalkTrack.Looped=true
+RightCrouchTrack.Looped=true
+RightJumpTrack.Looped=false
+CrouchIdleTrack.Looped=true
+StandIdleTrack.Looped=true
+SlideDirectionalTrack.Looped=true
+
+
+--running
+local isShiftHeld = false
+local isRunning = false
+
+--WASD's
+local isMovingForwards = false
+local isMovingBackwards = false
+local isMovingLeft = false
+local isMovingRight = false
+
+--crouch
+local isCtrlHeld = false
+local isCrouching = false
+
+local isSliding = false
+
+--State Machine
+local States = {
+	IDLE = "Idle",
+	WALKING ="Walking",
+	RUNNING = "Running",
+	BACKWARDS = "Backwards",
+	CROUCHING = "Crouching",
+	SLIDING = "Sliding"
+}
+local currentState = States.IDLE
+
+--stop animations
+local function StopAllAnims()
+	--forwards
+	ForwardsRunTrack:Stop()
+	ForwardsWalkTrack:Stop()
+	ForwardsCrouchTrack:Stop()
+	ForwardsJumpTrack:Stop()
+	--backwards
+	BackwardsRunTrack:Stop()
+	BackwardsWalkTrack:Stop()
+	BackwardsCrouchTrack:Stop()
+	BackwardsJumpTrack:Stop()
+	--left
+	LeftRunTrack:Stop()
+	LeftWalkTrack:Stop()
+	LeftCrouchTrack:Stop()
+	LeftJumpTrack:Stop()
+	--right
+	RightRunTrack:Stop()
+	RightWalkTrack:Stop()
+	RightCrouchTrack:Stop()
+	RightJumpTrack:Stop()
+	--idles
+	CrouchIdleTrack:Stop()
+	StandIdleTrack:Stop()
+	SlideDirectionalTrack:Stop()
+end
+
+--main state setter
+local function SetState(newState)
+	StopAllAnims()
+	currentState = newState
+	
+	if newState == States.IDLE then
+		if isCrouching then
+			hum.WalkSpeed = 7
+		else
+		hum.WalkSpeed = 0
+			StandIdleTrack:Play()
+			end
+	elseif newState == States.WALKING then
+		hum.WalkSpeed = 16
+		if isMovingForwards then
+			ForwardsWalkTrack:Play()
+		elseif isMovingLeft then
+			LeftWalkTrack:Play()
+		elseif isMovingRight then
+			RightWalkTrack:Play()
+		end
+	elseif newState == States.RUNNING then
+		hum.WalkSpeed = 35
+		if isMovingForwards then
+			ForwardsRunTrack:Play()
+		elseif isMovingLeft then
+			LeftRunTrack:Play()
+		elseif isMovingRight then
+			RightRunTrack:Play()
+		end
+	elseif newState == States.BACKWARDS then
+		if isShiftHeld then
+			hum.WalkSpeed = 20
+			BackwardsRunTrack:Play()
+		else
+			hum.WalkSpeed = 14
+			BackwardsWalkTrack:Play()
+		end
+	elseif newState == States.CROUCHING then
+		hum.WalkSpeed = 7
+		if isMovingForwards then
+			ForwardsCrouchTrack:Play()
+		elseif isMovingBackwards then
+			BackwardsCrouchTrack:Play()
+		elseif isMovingLeft then
+			LeftCrouchTrack:Play()
+		elseif isMovingRight then
+			RightCrouchTrack:Play()
+		else
+			CrouchIdleTrack:Play()
+		end
+	elseif newState == States.SLIDING then
+		hum.WalkSpeed = 0
+		SlideDirectionalTrack:Play()
+	end
+end
+
+-- choose state on input
+local function UpdateState()
+	if isSliding then
+		SetState(States.SLIDING)
+		print('SLIDING')
+	elseif isCrouching then
+		SetState(States.CROUCHING)
+		print('CROUCHING')
+	elseif isMovingBackwards then
+		SetState(States.BACKWARDS)
+		print('BACKWARDS')
+	elseif isMovingForwards or isMovingLeft or isMovingRight then
+		if isShiftHeld then
+			SetState(States.RUNNING)
+			print('RUNNING')
+	else
+			SetState(States.WALKING)
+			print('WALKING')
+		end
+	else
+		SetState(States.IDLE)
+		print('IDLE')
+	end
+end
+
+--begin input
+UIS.InputBegan:Connect(function(input, gameProcessed)
+	if _G.PODUIOPEN then return end
+	if input.KeyCode == Enum.KeyCode.W then
+		isMovingForwards =true
+		UpdateState()
+	elseif input.KeyCode == Enum.KeyCode.A then
+		isMovingLeft = true
+		UpdateState()
+	elseif input.KeyCode == Enum.KeyCode.S then
+		isMovingBackwards = true
+		UpdateState()
+	elseif input.KeyCode == Enum.KeyCode.D then
+		isMovingRight = true
+		UpdateState()
+	elseif input.KeyCode == Enum.KeyCode.LeftShift then
+		isShiftHeld = true
+		UpdateState()
+	elseif input.KeyCode == Enum.KeyCode.LeftControl then
+		if isSliding then
+			return
+		else
+			isCtrlHeld = true
+			isCrouching = true
+			hum.HipHeight -= 1
+			--hum:SetStateEnabled(Enum.HumanoidStateType.Jumping,false)
+			UpdateState()
+		end
+	elseif input.KeyCode == Enum.KeyCode.X then
+		if isCrouching then
+			return
+		end
+		--if not moving then no slide momentum
+		if isSliding ==  false and (isMovingForwards or isMovingLeft or isMovingRight or isMovingBackwards) then
+			isSliding = true
+			hum.HipHeight -= 1.2
+			local velocity = Instance.new("BodyVelocity")
+			velocity.MaxForce = Vector3.new(1,0,1) * 7000
+			velocity.Velocity = root.CFrame.lookVector * 100
+			velocity.Parent = root
+			UpdateState()
+			--wait for slide to end
+			wait(1)
+			velocity:Destroy()
+			hum.HipHeight += 1.2
+			isSliding = false
+			UpdateState()
+		end
+	end
+end)
+
+--end input
+UIS.InputEnded:Connect(function(input, gameProcessed)
+	if _G.PODUIOPEN then return end
+	if input.KeyCode == Enum.KeyCode.W then
+		isMovingForwards = false
+		UpdateState()
+	elseif input .KeyCode == Enum.KeyCode.A then
+		isMovingLeft = false
+		UpdateState()
+	elseif input.KeyCode == Enum.KeyCode.S then
+		isMovingBackwards = false
+		UpdateState()
+	elseif input.KeyCode == Enum.KeyCode.D then
+		isMovingRight = false
+		UpdateState()
+	elseif input.KeyCode == Enum.KeyCode.LeftShift then
+		isShiftHeld = false
+		UpdateState()
+	elseif input.KeyCode == Enum.KeyCode.LeftControl then
+		if isSliding then
+			return
+		elseif isCrouching == true then
+		isCtrlHeld = false
+		isCrouching = false
+		hum.HipHeight += 1
+		--hum:SetStateEnabled(Enum.HumanoidStateType.Jumping,true)
+		UpdateState()
+		end
+	end
+end)
