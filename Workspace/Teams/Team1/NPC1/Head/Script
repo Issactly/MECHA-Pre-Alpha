@@ -1,0 +1,39 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local npc = script.Parent.Parent
+local head = npc:FindFirstChild("Head")
+local npcoddy = head and head:FindFirstChild("npcoddy") or npc:FindFirstChild("npcoddy") or head
+
+wait(1)
+
+local prompt = nil
+for _, descendant in ipairs(npc:GetDescendants()) do
+	if descendant:IsA("ProximityPrompt") then
+		prompt = descendant
+		break
+	end
+end
+
+local RemoteEvent = ReplicatedStorage:FindFirstChild("EnterNPCEvent")
+
+local teamName = npc:GetAttribute("Team") or "Neutral"
+
+print("NPC Script loaded for: ", npc.Name, " Team: ", teamName)
+print("npcoddy found: ", npcoddy ~= nil)
+print("Prompt found: ", prompt ~= nil)
+
+if prompt and RemoteEvent then
+	prompt.Triggered:Connect(function(player)
+		print("Prompt triggered by: ", player.Name)
+		print("Team being sent: ", teamName)
+		RemoteEvent:FireClient(player, npc, teamName)
+
+		if teamName ~= "Neutral" then
+			local ReputationSystem = require(ReplicatedStorage:WaitForChild("ReputationSystem"))
+			ReputationSystem.AddReputation(player, teamName, 5)
+			print("Added 5 rep to " .. teamName .. " for " .. player.Name)
+			print("New value: ", ReputationSystem.GetReputation(player, teamName))
+		end
+	end)
+else
+	print("Prompt or RemoteEvent not found!")
+end
