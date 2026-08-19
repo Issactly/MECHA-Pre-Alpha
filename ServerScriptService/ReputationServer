@@ -1,0 +1,13 @@
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ReputationSystem = require(ReplicatedStorage:WaitForChild("ReputationSystem"))
+
+local function initializePlayer(player)
+	ReputationSystem.InitializePlayer(player)
+end
+
+Players.PlayerAdded:Connect(initializePlayer)
+
+for _, player in ipairs(Players:GetPlayers()) do
+	initializePlayer(player)
+end
