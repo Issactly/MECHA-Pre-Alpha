@@ -126,12 +126,21 @@ local function exitNPC()
 	player.CameraMinZoomDistance = 3
 end
 
-local function enterNPC(npcModel)
+local function enterNPC(npcModel, teamName)
 	if inNPC then return end
 	inNPC = true
+
 	currentNPC = npcModel
 
-	local npcoddy = npcModel:FindFirstChild("npcoddy") or npcModel
+	local head = npcModel:FindFirstChild("Head")
+	local npcoddy = nil
+	if head then
+		npcoddy = head:FindFirstChild("npcoddy")
+	end
+	if not npcoddy then
+		npcoddy = npcModel:FindFirstChild("npcoddy") or npcModel
+	end
+
 	local playerGui = player:FindFirstChild("PlayerGui")
 	local screenGui = playerGui and playerGui:FindFirstChild("ScreenGui")
 	local frame = screenGui and screenGui:FindFirstChild("Frame")
@@ -161,12 +170,25 @@ local function enterNPC(npcModel)
 
 	Camera.CameraSubject = npcoddy
 	Camera.CameraType = Enum.CameraType.Scriptable
-	Camera.CFrame = CFrame.new(npcoddy.Position)
+
+	if npcoddy:IsA("Model") then
+		Camera.CFrame = CFrame.new(npcoddy:GetPivot().Position)
+	else
+		Camera.CFrame = CFrame.new(npcoddy.Position)
+	end
 
 	setupCameraMovement(npcoddy)
 
 	currentUIState = UIState.NPC_MAIN
-	hrp.CFrame = CFrame.lookAt(hrp.Position, Vector3.new(npcoddy.Position.X, hrp.Position.Y, npcoddy.Position.Z)) * CFrame.Angles(0, math.pi * 0.6, 0)
+
+	local npcoddyPos = nil
+	if npcoddy:IsA("Model") then
+		npcoddyPos = npcoddy:GetPivot().Position
+	else
+		npcoddyPos = npcoddy.Position
+	end
+
+	hrp.CFrame = CFrame.lookAt(hrp.Position, Vector3.new(npcoddyPos.X, hrp.Position.Y, npcoddyPos.Z)) * CFrame.Angles(0, math.pi * 0.6, 0)
 end
 
 UIS.InputBegan:Connect(function(input, gameProcessed)
@@ -177,7 +199,7 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
 	end
 end)
 
-RemoteEvent.OnClientEvent:Connect(function(npcModel)
-	print("Received NPC enter event for: ", npcModel.Name)
-	enterNPC(npcModel)
+RemoteEvent.OnClientEvent:Connect(function(npcModel, teamName)
+	print("Received NPC enter event for: ", npcModel.Name, " Team: ", teamName)
+	enterNPC(npcModel, teamName)
 end)
