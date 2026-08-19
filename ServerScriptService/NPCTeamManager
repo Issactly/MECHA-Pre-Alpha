@@ -1,0 +1,19 @@
+local TeamsFolder = workspace:FindFirstChild("Teams")
+
+if TeamsFolder then
+	for _, teamFolder in pairs(TeamsFolder:GetChildren()) do
+		if teamFolder:IsA("Folder") then
+			local teamName = teamFolder.Name
+			print("Processing team folder: ", teamName)
+
+			for _, npc in pairs(teamFolder:GetChildren()) do
+				if npc:IsA("Model") then
+					npc:SetAttribute("Team", teamName)
+					print("Set " .. npc.Name .. " to team: " .. teamName)
+				end
+			end
+		end
+	end
+else
+	print("Teams folder not found!")
+end
