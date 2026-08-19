@@ -1,0 +1,88 @@
+local ReputationSystem = {}
+
+-- scalable team table
+ReputationSystem.Teams = {
+	{
+		Name = "Team1",
+		DisplayName = "Team One",
+		Thresholds = {
+			{ MinValue = 100, Title = "Excellent Standing"},
+			{MinValue = 50, Title = "Fair Standing"},
+			{MinValue = 0, Title = "Neutral Standing"},
+			{MinValue = -50, Title = "Poor Standing"},
+			{MinValue = -70, Title = "Bounty"}
+		}
+	},
+	{
+		Name = "Team2",
+		DisplayName = "Team Two",
+		Thresholds = {
+			{ MinValue = 100, Title = "Excellent Standing"},
+			{MinValue = 50, Title = "Fair Standing"},
+			{MinValue = 0, Title = "Neutral Standing"},
+			{MinValue = -50, Title = "Poor Standing"},
+			{MinValue = -70, Title = "Bounty"}
+		}
+	}
+}
+
+-- Track player rep
+function ReputationSystem.InitializePlayer(player)
+	for _, team in ipairs(ReputationSystem.Teams) do
+		local attrName = "Rep_" .. team.Name
+		if player:GetAttribute(attrName) == nil then
+			player:SetAttribute(attrName, 0)
+		end
+	end
+end
+
+-- call to check current rep
+function ReputationSystem.GetReputation(player, teamName)
+	local attrName = "Rep_" .. teamName
+	return player:GetAttribute(attrName) or 0
+end
+
+-- +rep
+function ReputationSystem.AddReputation(player, teamName, amount)
+	local current = ReputationSystem.GetReputation(player, teamName)
+	local newValue = current + amount
+	player:SetAttribute("Rep_" .. teamName, newValue)
+	return newValue
+end
+
+-- -rep
+function ReputationSystem.RemoveReputation(player, teamName, amount)
+	return ReputationSystem.AddReputation(player, teamName, -amount)
+end
+
+-- get current standing title
+function ReputationSystem.GetStanding(player, teamName)
+	local value = ReputationSystem.GetReputation(player, teamName)
+
+	for _, team in ipairs(ReputationSystem.Teams) do
+		if team.Name == teamName then
+			for _, threshold in ipairs(team.Thresholds) do
+				if value >= threshold.MinValue then
+					return threshold.Title
+				end
+			end
+		end
+	end
+	return "Unknown"
+end
+
+-- get all reps
+function ReputationSystem.GetAllReputations(player)
+	local allReps = {}
+
+	for _, team in ipairs(ReputationSystem.Teams) do
+		table.insert(allReps, {
+			TeamName = team.DisplayName,
+			Value = ReputationSystem.GetReputation(player, team.Name),
+			Standing = ReputationSystem.GetStanding(player, team.Name)
+		})
+	end
+	return allReps
+end
+
+return ReputationSystem
