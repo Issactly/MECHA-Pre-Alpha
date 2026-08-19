@@ -53,7 +53,7 @@ local function setupCameraMovement(cameraPart)
 			cameraPart.CFrame = cameraPart.CFrame:Lerp(CFrame.new(targetPosition), .2)
 		end
 
-		Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(cameraPart.Position), .2)
+		Camera.CFrame = CFrame.new(cameraPart.Position)
 
 		previousMouseX = DistanceFromOriginX
 		previousMouseY = DistanceFromOriginY
@@ -82,15 +82,14 @@ local function exitNPC()
 	if not inNPC then return end
 	inNPC = false
 
-	-- Disable the NPC UI when exiting
 	if currentNPC then
-		local NPCUI = currentNPC:FindFirstChild("NPCUI") or currentNPC:FindFirstChild("Head"):FindFirstChild("NPCUI")
-		if NPCUI then
-			local IntroPart = NPCUI:FindFirstChild("IntroPart")
-			if IntroPart then
-				local SurfaceGui = IntroPart:FindFirstChild("SurfaceGui")
-				if SurfaceGui then
-					SurfaceGui.Enabled = false
+		local playerGui = player:FindFirstChild("PlayerGui")
+		if playerGui then
+			local screenGui = playerGui:FindFirstChild("ScreenGui")
+			if screenGui then
+				local frame = screenGui:FindFirstChild("Frame")
+				if frame then
+					frame.Visible = false
 				end
 			end
 		end
@@ -133,10 +132,9 @@ local function enterNPC(npcModel)
 	currentNPC = npcModel
 
 	local npcoddy = npcModel:FindFirstChild("npcoddy") or npcModel
-	local NPCUI = npcModel:FindFirstChild("NPCUI") or npcModel:FindFirstChild("Head"):FindFirstChild("NPCUI")
-	local IntroPart = NPCUI:FindFirstChild("IntroPart")
-	local SurfaceGui = IntroPart:FindFirstChild("SurfaceGui")
-	local TextBox = SurfaceGui:FindFirstChild("TextBox")
+	local playerGui = player:FindFirstChild("PlayerGui")
+	local screenGui = playerGui and playerGui:FindFirstChild("ScreenGui")
+	local frame = screenGui and screenGui:FindFirstChild("Frame")
 
 	local character = player.Character
 	if not character then return end
@@ -145,8 +143,9 @@ local function enterNPC(npcModel)
 	local hum = character:FindFirstChild("Humanoid")
 	local Camera = workspace.CurrentCamera
 
-	SurfaceGui.Enabled = true
-	TextBox.Visible = true
+	if frame then 
+		frame.Visible = true
+	end
 
 	local npcPosition = npcModel:GetPivot().Position
 	character:MoveTo(npcPosition + Vector3.new(-4, 0, 3))
@@ -162,11 +161,12 @@ local function enterNPC(npcModel)
 
 	Camera.CameraSubject = npcoddy
 	Camera.CameraType = Enum.CameraType.Scriptable
+	Camera.CFrame = CFrame.new(npcoddy.Position)
+
 	setupCameraMovement(npcoddy)
 
 	currentUIState = UIState.NPC_MAIN
 	hrp.CFrame = CFrame.lookAt(hrp.Position, Vector3.new(npcoddy.Position.X, hrp.Position.Y, npcoddy.Position.Z)) * CFrame.Angles(0, math.pi * 0.6, 0)
-
 end
 
 UIS.InputBegan:Connect(function(input, gameProcessed)
